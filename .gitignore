@@ -1,0 +1,17 @@
+__pycache__/
+*.pyc
+*.pyo
+.ipynb_checkpoints/
+*.egg-info/
+dist/
+build/
+.env
+*.wav
+*.mp3
+*.ogg
+data/raw/*.wav
+data/processed/*.wav
+results/generated_audio/*.wav
+.DS_Store
+Thumbs.db
+*.log
