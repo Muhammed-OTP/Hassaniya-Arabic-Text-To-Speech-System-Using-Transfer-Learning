@@ -39,15 +39,15 @@
 - [ ] 04_tts_demo.ipynb — TTS pipeline demo with pretrained model
 
 ## Phase 3: LaTeX Report (23:30 → 01:00) — 1h 30min
-- [ ] Cover page with student info
-- [ ] Abstract + Introduction
-- [ ] Problem Statement + Related Work
-- [ ] Dataset Collection + Annotation
-- [ ] Text Preprocessing + TTS Architecture
-- [ ] Transfer Learning Strategy
-- [ ] Experiments + Results (honest/preliminary)
-- [ ] Limitations + Future Work + Conclusion
-- [ ] References (real citations)
+- [x] Cover page with student info
+- [x] Abstract + Introduction
+- [x] Problem Statement + Related Work
+- [x] Dataset Collection + Annotation
+- [x] Text Preprocessing + TTS Architecture
+- [x] Transfer Learning Strategy
+- [x] Experiments + Results (honest/preliminary)
+- [x] Limitations + Future Work + Conclusion
+- [x] References (real citations)
 
 ## Phase 4: HTML Presentation (01:00 → 02:00) — 1h
 - [ ] 15-slide HTML/CSS/JS presentation
