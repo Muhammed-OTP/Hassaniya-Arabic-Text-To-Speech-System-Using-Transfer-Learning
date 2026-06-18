@@ -3,7 +3,7 @@
 % ===================== PACKAGES =====================
 \usepackage[utf8]{inputenc}
 \usepackage[T1]{fontenc}
-\usepackage[english]{babel}
+\usepackage[french]{babel}
 \usepackage{geometry}
 \geometry{margin=2.5cm}
 \usepackage{setspace}
@@ -56,12 +56,12 @@
 
 \pagestyle{fancy}
 \fancyhf{}
-\fancyhead[L]{\small Hassaniya Arabic TTS Using Transfer Learning}
+\fancyhead[L]{\small TTS Arabe Hassaniya par Apprentissage par Transfert}
 \fancyhead[R]{\small Mohamed Salem E.E. Oubeid}
 \fancyfoot[C]{\thepage}
 \renewcommand{\headrulewidth}{0.4pt}
 
-% ===================== TITLE PAGE =====================
+% ===================== PAGE DE TITRE =====================
 \begin{document}
 
 \begin{titlepage}
@@ -69,54 +69,54 @@
 
 \vspace*{1cm}
 
-{\large \textbf{Master M1 --- Artificial Intelligence}}\\[0.3cm]
-{\large Module: NLP Dialects}\\[0.3cm]
-{\large Academic Year 2025--2026}
+{\large \textbf{Master M1 --- Intelligence Artificielle}}\\[0.3cm]
+{\large Module : Dialectes NLP}\\[0.3cm]
+{\large Année Universitaire 2025--2026}
 
 \vspace{2cm}
 
 \rule{\textwidth}{1.5pt}\\[0.5cm]
-{\Huge \textbf{Hassaniya Arabic\\Text-To-Speech System\\Using Transfer Learning}}\\[0.5cm]
+{\Huge \textbf{Système de Synthèse Vocale\\pour l'Arabe Hassaniya\\par Apprentissage par Transfert}}\\[0.5cm]
 \rule{\textwidth}{1.5pt}
 
 \vspace{1.5cm}
 
-{\Large \textit{Development of a Low-Resource Dialect Speech Synthesis\\Pipeline as a Proof of Concept}}
+{\Large \textit{Développement d'un Pipeline de Synthèse Vocale\\pour un Dialecte à Faibles Ressources — Preuve de Concept}}
 
 \vspace{2cm}
 
 \begin{tabular}{rl}
-    \textbf{Student:} & Mohamed Salem Ebnou Echvagha Oubeid \\
-    \textbf{Student ID:} & C34613 \\
-    \textbf{Supervisor:} & NLP Dialects Module Instructor \\
-    \textbf{Date:} & June 18, 2026 \\
+    \textbf{Étudiant :} & Mohamed Salem Ebnou Echvagha Oubeid \\
+    \textbf{N° Étudiant :} & C34613 \\
+    \textbf{Encadrant :} & Enseignant du Module Dialectes NLP \\
+    \textbf{Date :} & 18 juin 2026 \\
 \end{tabular}
 
 \vfill
 
-{\small This report is submitted in partial fulfillment of the requirements\\
-for the Master M1 in Artificial Intelligence.}
+{\small Ce rapport est soumis en accomplissement partiel des exigences\\
+du Master M1 en Intelligence Artificielle.}
 
 \end{center}
 \end{titlepage}
 
-% ===================== ABSTRACT =====================
+% ===================== RÉSUMÉ =====================
 \pagenumbering{roman}
 
-\section*{Abstract}
-\addcontentsline{toc}{section}{Abstract}
+\section*{Résumé}
+\addcontentsline{toc}{section}{Résumé}
 
-This report presents the design and implementation of a proof-of-concept Text-To-Speech (TTS) system for the Hassaniya Arabic dialect, the primary Arabic variety spoken in Mauritania and parts of West Africa. Hassaniya is a low-resource language with virtually no existing speech synthesis tools, posing significant challenges for natural language processing research and applications.
+Ce rapport présente la conception et l'implémentation d'un système de synthèse vocale (TTS) de preuve de concept pour le dialecte arabe hassaniya, la principale variété d'arabe parlée en Mauritanie et dans certaines régions d'Afrique de l'Ouest. Le hassaniya est une langue à faibles ressources ne disposant pratiquement d'aucun outil de synthèse vocale existant, ce qui pose des défis significatifs pour la recherche et les applications en traitement automatique du langage naturel.
 
-Our approach leverages \textbf{transfer learning} from pretrained Arabic TTS models rather than training from scratch, which would require orders of magnitude more data than available. We constructed a complete pipeline encompassing text normalization tailored to Hassaniya orthographic conventions, character-level tokenization, audio preprocessing with Mel spectrogram extraction, and a baseline synthesis system using Google Text-to-Speech (gTTS). Additionally, we define a Tacotron2-inspired neural architecture designed for fine-tuning on dialect-specific data.
+Notre approche s'appuie sur l'\textbf{apprentissage par transfert} à partir de modèles TTS arabes pré-entraînés plutôt que sur un entraînement à partir de zéro, qui nécessiterait des ordres de grandeur plus de données que celles disponibles. Nous avons construit un pipeline complet englobant la normalisation du texte adaptée aux conventions orthographiques du hassaniya, la tokenisation au niveau des caractères, le prétraitement audio avec extraction de Mel spectrogrammes, et un système de synthèse de référence utilisant Google Text-to-Speech (gTTS). De plus, nous définissons une architecture neuronale inspirée de Tacotron2 conçue pour l'affinage sur des données spécifiques au dialecte.
 
-Working with a dataset of 294 Hassaniya audio-text pairs, we demonstrate the feasibility of the pipeline, identify key challenges specific to Hassaniya (non-standardized orthography, limited data, dialect-specific phonology), and propose a roadmap for achieving production-quality dialect TTS. The Mel Cepstral Distortion (MCD) evaluation between original recordings and baseline synthesis confirms the expected gap between standard Arabic TTS and natural Hassaniya speech, motivating the need for dialect-specific models.
+Travaillant avec un jeu de données de 294 paires audio-texte hassaniya, nous démontrons la faisabilité du pipeline, identifions les défis clés spécifiques au hassaniya (orthographe non standardisée, données limitées, phonologie dialectale) et proposons une feuille de route pour atteindre un TTS dialectal de qualité production. L'évaluation par Distorsion Cepstrale Mel (MCD) entre les enregistrements originaux et la synthèse de référence confirme l'écart attendu entre le TTS en arabe standard et la parole naturelle hassaniya, motivant le besoin de modèles spécifiques au dialecte.
 
-\textbf{Keywords:} Text-to-Speech, Hassaniya Arabic, Transfer Learning, Low-Resource Languages, Speech Synthesis, NLP Dialects, Mauritania.
+\textbf{Mots-clés :} Synthèse vocale, Arabe hassaniya, Apprentissage par transfert, Langues à faibles ressources, TTS, Dialectes NLP, Mauritanie.
 
 \newpage
 
-% ===================== TABLE OF CONTENTS =====================
+% ===================== TABLE DES MATIÈRES =====================
 \tableofcontents
 \newpage
 
@@ -124,7 +124,7 @@ Working with a dataset of 294 Hassaniya audio-text pairs, we demonstrate the fea
 \listoftables
 \newpage
 
-% ===================== MAIN CONTENT =====================
+% ===================== CONTENU PRINCIPAL =====================
 \pagenumbering{arabic}
 
 % ======================================================
@@ -132,554 +132,554 @@ Working with a dataset of 294 Hassaniya audio-text pairs, we demonstrate the fea
 \label{sec:introduction}
 % ======================================================
 
-\subsection{Context and Motivation}
+\subsection{Contexte et Motivation}
 
-Speech synthesis, or Text-To-Speech (TTS), is a fundamental technology that converts written text into natural-sounding speech. Modern TTS systems have achieved near-human quality for major world languages such as English, Mandarin, and Modern Standard Arabic (MSA). However, the vast majority of the world's linguistic diversity---including regional dialects and minority languages---remains underserved by current speech technology \citep{xu2020lrspeech}.
+La synthèse vocale, ou Text-To-Speech (TTS), est une technologie fondamentale qui convertit le texte écrit en parole naturelle. Les systèmes TTS modernes ont atteint une qualité quasi-humaine pour les principales langues du monde telles que l'anglais, le mandarin et l'arabe standard moderne (ASM). Cependant, la grande majorité de la diversité linguistique mondiale --- y compris les dialectes régionaux et les langues minoritaires --- reste mal desservie par la technologie vocale actuelle \citep{xu2020lrspeech}.
 
-\textbf{Hassaniya Arabic} (also known as Hassaniya, Maure Arabic, or Kl\=am Ahl al-B\={\i}d\d{h}\=an) is a dialectal variety of Arabic spoken by approximately 3--4 million people, primarily in Mauritania, but also in parts of Western Sahara, southern Morocco, Mali, Senegal, and Niger. Hassaniya differs significantly from Modern Standard Arabic in phonology, morphology, lexicon, and prosody. It occupies a unique position as a dialect that serves as the lingua franca of an entire nation yet lacks the digital tools and resources available to MSA.
+L'\textbf{arabe hassaniya} (également connu sous le nom de hassaniya, arabe maure, ou Kl\=am Ahl al-B\={\i}d\d{h}\=an) est une variété dialectale de l'arabe parlée par environ 3 à 4 millions de personnes, principalement en Mauritanie, mais aussi dans certaines régions du Sahara occidental, du sud du Maroc, du Mali, du Sénégal et du Niger. Le hassaniya diffère significativement de l'arabe standard moderne en phonologie, morphologie, lexique et prosodie. Il occupe une position unique en tant que dialecte servant de lingua franca pour une nation entière tout en manquant des outils et ressources numériques disponibles pour l'ASM.
 
-The absence of TTS tools for Hassaniya has practical consequences: it limits accessibility for visually impaired Hassaniya speakers, prevents the development of voice-based interfaces in the dialect, and hinders educational technology for communities where Hassaniya is the primary language of communication.
+L'absence d'outils TTS pour le hassaniya a des conséquences pratiques : elle limite l'accessibilité pour les locuteurs hassaniya malvoyants, empêche le développement d'interfaces vocales dans le dialecte et entrave la technologie éducative pour les communautés où le hassaniya est la principale langue de communication.
 
-\subsection{Problem Statement}
+\subsection{Problématique}
 
-Building a TTS system for Hassaniya Arabic faces several interconnected challenges:
+La construction d'un système TTS pour l'arabe hassaniya fait face à plusieurs défis interconnectés :
 
 \begin{enumerate}[label=(\roman*)]
-    \item \textbf{Data scarcity:} No large-scale, publicly available speech corpus exists for Hassaniya. Typical state-of-the-art TTS models require 10,000+ hours of transcribed speech \citep{shen2018natural}, while our available dataset contains only 294 samples.
-    \item \textbf{Orthographic inconsistency:} Hassaniya lacks standardized spelling conventions. The same word may be written in multiple ways, complicating text normalization.
-    \item \textbf{Phonological divergence:} Hassaniya contains phonemes and prosodic patterns absent from MSA, meaning pretrained Arabic models cannot directly produce natural Hassaniya speech.
-    \item \textbf{Computational constraints:} Training neural TTS models from scratch requires substantial GPU resources and time, which may not be available in academic settings.
+    \item \textbf{Rareté des données :} Aucun corpus vocal à grande échelle, publiquement disponible, n'existe pour le hassaniya. Les modèles TTS de pointe typiques nécessitent plus de 10 000 heures de parole transcrite \citep{shen2018natural}, alors que notre jeu de données disponible ne contient que 294 échantillons.
+    \item \textbf{Incohérence orthographique :} Le hassaniya manque de conventions d'écriture standardisées. Le même mot peut être écrit de multiples façons, compliquant la normalisation du texte.
+    \item \textbf{Divergence phonologique :} Le hassaniya contient des phonèmes et des schémas prosodiques absents de l'ASM, ce qui signifie que les modèles arabes pré-entraînés ne peuvent pas directement produire de la parole hassaniya naturelle.
+    \item \textbf{Contraintes computationnelles :} L'entraînement de modèles TTS neuronaux à partir de zéro nécessite des ressources GPU substantielles et du temps, qui peuvent ne pas être disponibles en milieu académique.
 \end{enumerate}
 
-\subsection{Objectives}
+\subsection{Objectifs}
 
-This project aims to:
+Ce projet vise à :
 
 \begin{itemize}
-    \item Design and implement a complete TTS preprocessing pipeline for Hassaniya Arabic, including text normalization, tokenization, and audio feature extraction.
-    \item Demonstrate the feasibility of transfer learning from pretrained Arabic TTS models to the Hassaniya dialect.
-    \item Define a neural architecture suitable for fine-tuning on small dialect datasets.
-    \item Evaluate baseline synthesis quality and identify the gap between standard Arabic TTS and natural Hassaniya speech.
-    \item Provide a documented, reproducible codebase as a foundation for future Hassaniya speech technology research.
+    \item Concevoir et implémenter un pipeline complet de prétraitement TTS pour l'arabe hassaniya, incluant la normalisation du texte, la tokenisation et l'extraction de caractéristiques audio.
+    \item Démontrer la faisabilité de l'apprentissage par transfert à partir de modèles TTS arabes pré-entraînés vers le dialecte hassaniya.
+    \item Définir une architecture neuronale adaptée à l'affinage sur de petits jeux de données dialectaux.
+    \item Évaluer la qualité de la synthèse de référence et identifier l'écart entre le TTS en arabe standard et la parole hassaniya naturelle.
+    \item Fournir une base de code documentée et reproductible comme fondation pour la recherche future en technologie vocale hassaniya.
 \end{itemize}
 
-\subsection{Report Organization}
+\subsection{Organisation du Rapport}
 
-The remainder of this report is organized as follows. Section~\ref{sec:related_work} reviews related work in TTS and low-resource speech synthesis. Section~\ref{sec:dataset} describes the Hassaniya dataset and its characteristics. Section~\ref{sec:text_preprocessing} details the text normalization and annotation pipeline. Section~\ref{sec:audio_preprocessing} covers audio preprocessing and feature extraction. Section~\ref{sec:architecture} presents the TTS model architecture and transfer learning strategy. Section~\ref{sec:experiments} reports experimental results. Section~\ref{sec:limitations} discusses limitations and future work. Section~\ref{sec:conclusion} concludes the report.
+Le reste de ce rapport est organisé comme suit. La section~\ref{sec:related_work} passe en revue les travaux connexes en TTS et synthèse vocale à faibles ressources. La section~\ref{sec:dataset} décrit le jeu de données hassaniya et ses caractéristiques. La section~\ref{sec:text_preprocessing} détaille le pipeline de normalisation et d'annotation du texte. La section~\ref{sec:audio_preprocessing} couvre le prétraitement audio et l'extraction de caractéristiques. La section~\ref{sec:architecture} présente l'architecture du modèle TTS et la stratégie d'apprentissage par transfert. La section~\ref{sec:experiments} rapporte les résultats expérimentaux. La section~\ref{sec:limitations} discute des limitations et travaux futurs. La section~\ref{sec:conclusion} conclut le rapport.
 
 % ======================================================
-\section{Related Work}
+\section{Travaux Connexes}
 \label{sec:related_work}
 % ======================================================
 
-\subsection{Modern TTS Architectures}
+\subsection{Architectures TTS Modernes}
 
-The field of speech synthesis has undergone a revolution since the introduction of neural sequence-to-sequence models. We review the key architectures relevant to our work.
+Le domaine de la synthèse vocale a connu une révolution depuis l'introduction des modèles neuronaux séquence-à-séquence. Nous passons en revue les architectures clés pertinentes pour notre travail.
 
-\textbf{Tacotron} \citep{wang2017tacotron} introduced an end-to-end generative TTS model that maps character sequences directly to spectrograms. The model uses an encoder-decoder architecture with attention, eliminating the need for hand-engineered linguistic features that characterized earlier concatenative and parametric synthesis systems.
+\textbf{Tacotron} \citep{wang2017tacotron} a introduit un modèle TTS génératif bout-en-bout qui associe des séquences de caractères directement à des spectrogrammes. Le modèle utilise une architecture encodeur-décodeur avec attention, éliminant le besoin de caractéristiques linguistiques conçues manuellement qui caractérisaient les systèmes de synthèse concaténative et paramétrique antérieurs.
 
-\textbf{Tacotron 2} \citep{shen2018natural} improved upon the original by conditioning a modified WaveNet vocoder on Mel spectrogram predictions, achieving near-human naturalness for English. The architecture comprises a recurrent sequence-to-sequence model with location-sensitive attention that produces Mel spectrograms, followed by a neural vocoder for waveform generation.
+\textbf{Tacotron 2} \citep{shen2018natural} a amélioré l'original en conditionnant un vocodeur WaveNet modifié sur des prédictions de Mel spectrogrammes, atteignant une naturalité quasi-humaine pour l'anglais. L'architecture comprend un modèle séquence-à-séquence récurrent avec attention sensible à la position qui produit des Mel spectrogrammes, suivi d'un vocodeur neuronal pour la génération de formes d'onde.
 
-\textbf{FastSpeech 2} \citep{ren2020fastspeech} addressed the slow autoregressive inference of Tacotron models by introducing a non-autoregressive architecture with explicit duration, pitch, and energy predictors. This enables parallel generation and more robust synthesis.
+\textbf{FastSpeech 2} \citep{ren2020fastspeech} a résolu le problème de l'inférence autorégressive lente des modèles Tacotron en introduisant une architecture non-autorégressive avec des prédicteurs explicites de durée, de hauteur et d'énergie. Cela permet la génération parallèle et une synthèse plus robuste.
 
-\textbf{VITS} \citep{kim2021conditional} unified the acoustic model and vocoder into a single end-to-end framework using variational inference augmented with adversarial training. VITS achieves state-of-the-art quality while eliminating the two-stage pipeline.
+\textbf{VITS} \citep{kim2021conditional} a unifié le modèle acoustique et le vocodeur en un seul cadre bout-en-bout utilisant l'inférence variationnelle augmentée par un entraînement adversarial. VITS atteint une qualité de pointe tout en éliminant le pipeline à deux étapes.
 
-\subsection{Vocoder Models}
+\subsection{Modèles de Vocodeur}
 
-The vocoder component converts Mel spectrograms into audio waveforms. Key models include:
+Le composant vocodeur convertit les Mel spectrogrammes en formes d'onde audio. Les modèles clés incluent :
 
 \begin{itemize}
-    \item \textbf{WaveNet} \citep{van2016wavenet}: An autoregressive model producing high-quality audio but with extremely slow inference.
-    \item \textbf{WaveGlow}: A flow-based generative model enabling parallel waveform synthesis.
-    \item \textbf{HiFi-GAN} \citep{kong2020hifi}: A GAN-based vocoder achieving both high quality and fast inference, now the standard choice for TTS systems.
+    \item \textbf{WaveNet} \citep{van2016wavenet} : Un modèle autorégressif produisant un audio de haute qualité mais avec une inférence extrêmement lente.
+    \item \textbf{WaveGlow} : Un modèle génératif basé sur les flux permettant la synthèse parallèle de formes d'onde.
+    \item \textbf{HiFi-GAN} \citep{kong2020hifi} : Un vocodeur basé sur les GANs atteignant à la fois une haute qualité et une inférence rapide, désormais le choix standard pour les systèmes TTS.
 \end{itemize}
 
-\subsection{Low-Resource Speech Synthesis}
+\subsection{Synthèse Vocale à Faibles Ressources}
 
-The challenge of building TTS systems for low-resource languages has received increasing attention.
+Le défi de construire des systèmes TTS pour les langues à faibles ressources a reçu une attention croissante.
 
-\textbf{LRSpeech} \citep{xu2020lrspeech} proposed a framework for extremely low-resource speech synthesis and recognition, demonstrating that knowledge transfer from high-resource languages can enable TTS with as few as 200 utterances. This work is particularly relevant to our project given the similar data constraints.
+\textbf{LRSpeech} \citep{xu2020lrspeech} a proposé un cadre pour la synthèse et la reconnaissance vocale à très faibles ressources, démontrant que le transfert de connaissances depuis des langues à hautes ressources peut permettre le TTS avec aussi peu que 200 énoncés. Ce travail est particulièrement pertinent pour notre projet compte tenu des contraintes de données similaires.
 
-\textbf{YourTTS} \citep{casanova2022yourtts} introduced a zero-shot multi-speaker TTS system capable of synthesizing speech in unseen languages with minimal data. The model leverages multilingual training to generalize across languages, suggesting a promising direction for dialect adaptation.
+\textbf{YourTTS} \citep{casanova2022yourtts} a introduit un système TTS multi-locuteur en zéro-shot capable de synthétiser de la parole dans des langues non vues avec un minimum de données. Le modèle exploite l'entraînement multilingue pour généraliser à travers les langues, suggérant une direction prometteuse pour l'adaptation dialectale.
 
-\textbf{Transfer learning for Arabic TTS} remains relatively underexplored. While some work has addressed MSA and Egyptian Arabic, Hassaniya has received no attention in the speech synthesis literature to our knowledge.
+L'\textbf{apprentissage par transfert pour le TTS arabe} reste relativement peu exploré. Bien que certains travaux aient abordé l'ASM et l'arabe égyptien, le hassaniya n'a reçu aucune attention dans la littérature sur la synthèse vocale à notre connaissance.
 
-\subsection{Arabic NLP and Dialect Processing}
+\subsection{TAL Arabe et Traitement des Dialectes}
 
-Arabic dialect processing presents unique challenges due to the diglossia between MSA and regional varieties. \citet{habash2010introduction} provides a comprehensive overview of Arabic NLP challenges, including the lack of orthographic standards for dialects. These challenges directly impact TTS system development, as inconsistent input text degrades synthesis quality.
+Le traitement des dialectes arabes présente des défis uniques en raison de la diglossie entre l'ASM et les variétés régionales. \citet{habash2010introduction} fournit une vue d'ensemble complète des défis du TAL arabe, y compris le manque de standards orthographiques pour les dialectes. Ces défis impactent directement le développement des systèmes TTS, car un texte d'entrée incohérent dégrade la qualité de la synthèse.
 
 % ======================================================
-\section{Dataset Description}
+\section{Description du Jeu de Données}
 \label{sec:dataset}
 % ======================================================
 
-\subsection{Data Collection}
+\subsection{Collecte des Données}
 
-Our dataset consists of 294 audio recordings with corresponding Hassaniya Arabic transcriptions. The data is stored in Apache Parquet format, with each record containing:
+Notre jeu de données se compose de 294 enregistrements audio avec les transcriptions correspondantes en arabe hassaniya. Les données sont stockées au format Apache Parquet, chaque enregistrement contenant :
 
 \begin{itemize}
-    \item \texttt{audio}: A dictionary containing raw audio bytes and file path metadata.
-    \item \texttt{transcription}: The Hassaniya Arabic text corresponding to the audio.
+    \item \texttt{audio} : Un dictionnaire contenant les octets audio bruts et les métadonnées de chemin de fichier.
+    \item \texttt{transcription} : Le texte en arabe hassaniya correspondant à l'audio.
 \end{itemize}
 
-The recordings capture natural Hassaniya speech from various contexts, including conversational speech, narrative passages, and political discourse. This diversity, while challenging for TTS consistency, reflects authentic dialect usage.
+Les enregistrements capturent la parole hassaniya naturelle dans divers contextes, incluant la parole conversationnelle, les passages narratifs et le discours politique. Cette diversité, bien que difficile pour la cohérence du TTS, reflète une utilisation authentique du dialecte.
 
-\subsection{Dataset Statistics}
+\subsection{Statistiques du Jeu de Données}
 
-Table~\ref{tab:dataset_stats} summarizes the key statistics of our dataset.
+Le tableau~\ref{tab:dataset_stats} résume les statistiques clés de notre jeu de données.
 
 \begin{table}[H]
 \centering
-\caption{Hassaniya Arabic Dataset Statistics}
+\caption{Statistiques du Jeu de Données en Arabe Hassaniya}
 \label{tab:dataset_stats}
 \begin{tabular}{ll}
 \toprule
-\textbf{Property} & \textbf{Value} \\
+\textbf{Propriété} & \textbf{Valeur} \\
 \midrule
-Total samples & 294 \\
-Unique transcriptions & 294 \\
-Mean text length & $\sim$33 characters \\
-Min text length & 4 characters \\
-Max text length & 182 characters \\
-Mean word count & $\sim$5 words \\
-Unique characters (before normalization) & $\sim$55 \\
-Unique characters (after normalization) & $\sim$38 \\
-Audio format & WAV (encoded as bytes) \\
+Nombre total d'échantillons & 294 \\
+Transcriptions uniques & 294 \\
+Longueur moyenne du texte & $\sim$33 caractères \\
+Longueur minimale du texte & 4 caractères \\
+Longueur maximale du texte & 182 caractères \\
+Nombre moyen de mots & $\sim$5 mots \\
+Caractères uniques (avant normalisation) & $\sim$55 \\
+Caractères uniques (après normalisation) & $\sim$38 \\
+Format audio & WAV (encodé en octets) \\
 \bottomrule
 \end{tabular}
 \end{table}
 
-\subsection{Text Characteristics}
+\subsection{Caractéristiques Textuelles}
 
-The transcriptions exhibit several properties specific to Hassaniya:
-
-\begin{itemize}
-    \item \textbf{Dialect vocabulary:} Words such as ``\textarabic{يغير}'' (only/just), ``\textarabic{ايلين}'' (when), and ``\textarabic{كاع}'' (all/completely) are distinctly Hassaniya and absent from MSA.
-    \item \textbf{Mixed register:} Some samples contain MSA vocabulary alongside Hassaniya expressions, reflecting natural code-switching patterns.
-    \item \textbf{Variable orthography:} The same phoneme may be transcribed differently across samples, reflecting the lack of a standardized Hassaniya writing system.
-    \item \textbf{Length variation:} Transcriptions range from single words (4 characters) to complex sentences (182 characters), requiring robust handling of variable-length inputs.
-\end{itemize}
-
-\subsection{Audio Characteristics}
-
-Audio analysis reveals the following properties:
+Les transcriptions présentent plusieurs propriétés spécifiques au hassaniya :
 
 \begin{itemize}
-    \item Variable recording conditions (not studio-quality).
-    \item Different speakers across samples.
-    \item Presence of background noise in some recordings.
-    \item Variable duration, with most samples between 1--10 seconds.
+    \item \textbf{Vocabulaire dialectal :} Des mots tels que \textarabic{يغير} (seulement/juste), \textarabic{ايلين} (quand) et \textarabic{كاع} (tout/complètement) sont distinctement hassaniya et absents de l'ASM.
+    \item \textbf{Registre mixte :} Certains échantillons contiennent du vocabulaire ASM aux côtés d'expressions hassaniya, reflétant des schémas naturels d'alternance codique.
+    \item \textbf{Orthographe variable :} Le même phonème peut être transcrit différemment d'un échantillon à l'autre, reflétant l'absence de système d'écriture hassaniya standardisé.
+    \item \textbf{Variation de longueur :} Les transcriptions vont de mots isolés (4 caractères) à des phrases complexes (182 caractères), nécessitant une gestion robuste des entrées de longueur variable.
 \end{itemize}
 
-These characteristics are typical of low-resource dialect datasets and motivate our preprocessing pipeline design (Section~\ref{sec:audio_preprocessing}).
+\subsection{Caractéristiques Audio}
+
+L'analyse audio révèle les propriétés suivantes :
+
+\begin{itemize}
+    \item Conditions d'enregistrement variables (pas de qualité studio).
+    \item Différents locuteurs à travers les échantillons.
+    \item Présence de bruit de fond dans certains enregistrements.
+    \item Durée variable, la plupart des échantillons se situant entre 1 et 10 secondes.
+\end{itemize}
+
+Ces caractéristiques sont typiques des jeux de données dialectaux à faibles ressources et motivent la conception de notre pipeline de prétraitement (section~\ref{sec:audio_preprocessing}).
 
 % ======================================================
-\section{Text Preprocessing and Annotation}
+\section{Prétraitement et Annotation du Texte}
 \label{sec:text_preprocessing}
 % ======================================================
 
 \subsection{Motivation}
 
-Text preprocessing is a critical first step in any TTS pipeline. For Hassaniya Arabic, preprocessing is especially important because the dialect lacks standardized orthography. Without normalization, the model would encounter multiple surface forms for the same underlying word, leading to data sparsity and degraded synthesis quality.
+Le prétraitement du texte est une première étape cruciale dans tout pipeline TTS. Pour l'arabe hassaniya, le prétraitement est particulièrement important car le dialecte manque d'orthographe standardisée. Sans normalisation, le modèle rencontrerait de multiples formes de surface pour le même mot sous-jacent, conduisant à une rareté des données et une qualité de synthèse dégradée.
 
-\subsection{Normalization Pipeline}
+\subsection{Pipeline de Normalisation}
 
-Our text normalization pipeline applies the following transformations in sequence:
+Notre pipeline de normalisation du texte applique les transformations suivantes en séquence :
 
 \begin{enumerate}
-    \item \textbf{Unicode normalization (NFKC):} Standardize Unicode representations to ensure consistent encoding of Arabic characters.
+    \item \textbf{Normalisation Unicode (NFKC) :} Standardiser les représentations Unicode pour assurer un encodage cohérent des caractères arabes.
 
-    \item \textbf{Diacritic removal:} Remove Arabic diacritical marks (tashkeel: fat\d{h}a, \d{d}amma, kasra, shadda, suk\=un, tanw\={\i}n). Our dataset uses diacritics inconsistently, so removing them reduces vocabulary size without significant information loss for TTS.
+    \item \textbf{Suppression des diacritiques :} Supprimer les signes diacritiques arabes (tashkeel : fat\d{h}a, \d{d}amma, kasra, shadda, suk\=un, tanw\={\i}n). Notre jeu de données utilise les diacritiques de manière incohérente, donc leur suppression réduit la taille du vocabulaire sans perte significative d'information pour le TTS.
 
-    \item \textbf{Character normalization:} Map character variants to canonical forms:
+    \item \textbf{Normalisation des caractères :} Associer les variantes de caractères à des formes canoniques :
 
     \begin{table}[H]
     \centering
-    \caption{Character Normalization Mappings}
+    \caption{Table de Normalisation des Caractères}
     \label{tab:char_norm}
     \begin{tabular}{ccl}
     \toprule
-    \textbf{Original} & \textbf{Normalized} & \textbf{Rationale} \\
+    \textbf{Original} & \textbf{Normalisé} & \textbf{Justification} \\
     \midrule
-    \textarabic{آ}, \textarabic{أ}, \textarabic{إ}, \textarabic{ٱ} & \textarabic{ا} & All Alef forms $\to$ bare Alef \\
-    \textarabic{ؤ} & \textarabic{و} & Hamza on Waw $\to$ Waw \\
-    \textarabic{ئ} & \textarabic{ي} & Hamza on Ya $\to$ Ya \\
+    \textarabic{آ}, \textarabic{أ}, \textarabic{إ}, \textarabic{ٱ} & \textarabic{ا} & Toutes les formes d'Alef $\to$ Alef de base \\
+    \textarabic{ؤ} & \textarabic{و} & Hamza sur Waw $\to$ Waw \\
+    \textarabic{ئ} & \textarabic{ي} & Hamza sur Ya $\to$ Ya \\
     \textarabic{ة} & \textarabic{ه} & Ta Marbuta $\to$ Ha \\
     \textarabic{ى} & \textarabic{ي} & Alef Maqsura $\to$ Ya \\
     \bottomrule
     \end{tabular}
     \end{table}
 
-    \item \textbf{Non-Arabic character removal:} Strip any characters outside the Arabic Unicode block and basic punctuation, removing noise from transcription errors.
+    \item \textbf{Suppression des caractères non-arabes :} Éliminer tout caractère en dehors du bloc Unicode arabe et de la ponctuation de base, supprimant le bruit des erreurs de transcription.
 
-    \item \textbf{Whitespace normalization:} Collapse multiple spaces and trim leading/trailing whitespace.
+    \item \textbf{Normalisation des espaces :} Fusionner les espaces multiples et supprimer les espaces en début et fin de chaîne.
 \end{enumerate}
 
-Algorithm~\ref{alg:normalize} presents the normalization procedure in pseudocode.
+L'algorithme~\ref{alg:normalize} présente la procédure de normalisation en pseudo-code.
 
 \begin{algorithm}[H]
-\caption{Hassaniya Text Normalization}
+\caption{Normalisation du Texte Hassaniya}
 \label{alg:normalize}
 \begin{algorithmic}[1]
-\Require Raw Hassaniya text $t$
-\Ensure Normalized text $t'$
+\Require Texte hassaniya brut $t$
+\Ensure Texte normalisé $t'$
 \State $t \gets \text{NFKC}(t)$
-\State $t \gets \text{RemoveDiacritics}(t)$
-\For{each $(src, dst)$ in CharNormMap}
-    \State $t \gets t.\text{replace}(src, dst)$
+\State $t \gets \text{SupprimerDiacritiques}(t)$
+\For{chaque $(src, dst)$ dans TableNormCaractères}
+    \State $t \gets t.\text{remplacer}(src, dst)$
 \EndFor
-\State $t \gets \text{RemoveNonArabic}(t)$
-\State $t \gets \text{NormalizeWhitespace}(t)$
+\State $t \gets \text{SupprimerNonArabe}(t)$
+\State $t \gets \text{NormaliserEspaces}(t)$
 \State \Return $t$
 \end{algorithmic}
 \end{algorithm}
 
-\subsection{Character-Level Tokenization}
+\subsection{Tokenisation au Niveau des Caractères}
 
-We employ character-level tokenization rather than phoneme-level or subword tokenization for the following reasons:
+Nous employons une tokenisation au niveau des caractères plutôt qu'au niveau des phonèmes ou des sous-mots pour les raisons suivantes :
 
 \begin{enumerate}
-    \item No Hassaniya phoneme dictionary exists.
-    \item Arabic script is largely phonetic---letters map relatively closely to sounds.
-    \item Character-level tokenization avoids out-of-vocabulary issues inherent to word-level approaches.
-    \item Given our small dataset, minimizing vocabulary size is beneficial.
+    \item Aucun dictionnaire de phonèmes hassaniya n'existe.
+    \item L'écriture arabe est largement phonétique --- les lettres correspondent relativement étroitement aux sons.
+    \item La tokenisation au niveau des caractères évite les problèmes de vocabulaire hors-domaine inhérents aux approches au niveau des mots.
+    \item Étant donné notre petit jeu de données, minimiser la taille du vocabulaire est bénéfique.
 \end{enumerate}
 
-Each character is mapped to an integer ID, with special tokens for padding (\texttt{<pad>}), start of sequence (\texttt{<sos>}), end of sequence (\texttt{<eos>}), and space (\texttt{<space>}). The resulting vocabulary contains approximately 42 tokens (4 special + 38 Arabic characters after normalization).
+Chaque caractère est associé à un identifiant entier, avec des tokens spéciaux pour le remplissage (\texttt{<pad>}), le début de séquence (\texttt{<sos>}), la fin de séquence (\texttt{<eos>}) et l'espace (\texttt{<space>}). Le vocabulaire résultant contient environ 42 tokens (4 spéciaux + 38 caractères arabes après normalisation).
 
-\subsection{Annotation Results}
+\subsection{Résultats de l'Annotation}
 
-After applying the normalization pipeline to all 294 transcriptions:
+Après application du pipeline de normalisation aux 294 transcriptions :
 
 \begin{itemize}
-    \item The unique character set was reduced from approximately 55 to 38 characters.
-    \item Mean token sequence length: approximately 33 tokens per sample.
-    \item Maximum token sequence length: 182 tokens.
-    \item The annotated dataset was saved in CSV format with original text, normalized text, and integer ID sequences.
+    \item Le jeu de caractères uniques a été réduit d'environ 55 à 38 caractères.
+    \item Longueur moyenne des séquences de tokens : environ 33 tokens par échantillon.
+    \item Longueur maximale des séquences de tokens : 182 tokens.
+    \item Le jeu de données annoté a été sauvegardé au format CSV avec le texte original, le texte normalisé et les séquences d'identifiants entiers.
 \end{itemize}
 
 % ======================================================
-\section{Audio Preprocessing and Feature Extraction}
+\section{Prétraitement Audio et Extraction de Caractéristiques}
 \label{sec:audio_preprocessing}
 % ======================================================
 
-\subsection{Audio Processing Pipeline}
+\subsection{Pipeline de Traitement Audio}
 
-The audio preprocessing pipeline transforms raw recordings into features suitable for TTS model training. Figure~\ref{fig:audio_pipeline} illustrates the processing stages.
+Le pipeline de prétraitement audio transforme les enregistrements bruts en caractéristiques adaptées à l'entraînement du modèle TTS. La figure~\ref{fig:audio_pipeline} illustre les étapes de traitement.
 
 \begin{figure}[H]
 \centering
 \fbox{\parbox{0.9\textwidth}{\centering
-\textbf{Audio Preprocessing Pipeline}\\[0.3cm]
-Raw Audio Bytes $\xrightarrow{\text{decode}}$ Waveform $\xrightarrow{\text{resample}}$ 22050\,Hz $\xrightarrow{\text{trim}}$ Trimmed $\xrightarrow{\text{extract}}$ Mel Spectrogram
+\textbf{Pipeline de Prétraitement Audio}\\[0.3cm]
+Octets Audio Bruts $\xrightarrow{\text{décoder}}$ Forme d'Onde $\xrightarrow{\text{rééchantillonner}}$ 22050\,Hz $\xrightarrow{\text{couper}}$ Nettoyé $\xrightarrow{\text{extraire}}$ Mel Spectrogramme
 }}
-\caption{Audio preprocessing pipeline overview.}
+\caption{Vue d'ensemble du pipeline de prétraitement audio.}
 \label{fig:audio_pipeline}
 \end{figure}
 
-\subsection{Resampling}
+\subsection{Rééchantillonnage}
 
-All audio samples are resampled to a uniform sample rate of 22050\,Hz, which is the standard for TTS systems including Tacotron~2 and VITS. Stereo recordings are converted to mono by averaging channels. The resampling is performed using the \texttt{librosa} library with high-quality resampling filters.
+Tous les échantillons audio sont rééchantillonnés à un taux uniforme de 22050\,Hz, qui est le standard pour les systèmes TTS incluant Tacotron~2 et VITS. Les enregistrements stéréo sont convertis en mono par moyennage des canaux. Le rééchantillonnage est effectué à l'aide de la bibliothèque \texttt{librosa} avec des filtres de rééchantillonnage de haute qualité.
 
-\subsection{Silence Trimming}
+\subsection{Suppression des Silences}
 
-Speech recordings frequently contain silence at the beginning and end. We apply silence trimming with a threshold of 20\,dB below the peak amplitude, using \texttt{librosa.effects.trim}. This step:
+Les enregistrements vocaux contiennent fréquemment des silences au début et à la fin. Nous appliquons une suppression des silences avec un seuil de 20\,dB en dessous de l'amplitude maximale, en utilisant \texttt{librosa.effects.trim}. Cette étape :
 
 \begin{itemize}
-    \item Removes non-speech segments that waste model capacity.
-    \item Improves alignment between text and audio features.
-    \item Reduces total dataset duration, resulting in more efficient training.
+    \item Supprime les segments non vocaux qui gaspillent la capacité du modèle.
+    \item Améliore l'alignement entre le texte et les caractéristiques audio.
+    \item Réduit la durée totale du jeu de données, résultant en un entraînement plus efficace.
 \end{itemize}
 
-\subsection{Mel Spectrogram Extraction}
+\subsection{Extraction des Mel Spectrogrammes}
 
-The Mel spectrogram is the primary feature representation used by modern TTS models. It is computed as follows:
+Le Mel spectrogramme est la représentation de caractéristiques principale utilisée par les modèles TTS modernes. Il est calculé comme suit :
 
 \begin{enumerate}
-    \item Apply the Short-Time Fourier Transform (STFT) with:
+    \item Appliquer la Transformée de Fourier à Court Terme (STFT) avec :
     \begin{itemize}
-        \item FFT window size: $N_{\text{FFT}} = 1024$
-        \item Hop length: $H = 256$ (corresponding to $\sim$11.6\,ms at 22050\,Hz)
+        \item Taille de fenêtre FFT : $N_{\text{FFT}} = 1024$
+        \item Hop length : $H = 256$ (correspondant à $\sim$11,6\,ms à 22050\,Hz)
     \end{itemize}
-    \item Apply a bank of $N_{\text{mels}} = 80$ Mel-scaled triangular filters.
-    \item Convert to decibel scale: $\text{Mel}_{\text{dB}} = 10 \cdot \log_{10}(\text{Mel} / \text{ref})$.
+    \item Appliquer un banc de $N_{\text{mels}} = 80$ filtres triangulaires à l'échelle Mel.
+    \item Convertir en échelle de décibels : $\text{Mel}_{\text{dB}} = 10 \cdot \log_{10}(\text{Mel} / \text{ref})$.
 \end{enumerate}
 
-The resulting Mel spectrogram has shape $[80 \times T]$, where $T$ is the number of time frames, computed as:
+Le Mel spectrogramme résultant a la forme $[80 \times T]$, où $T$ est le nombre de trames temporelles, calculé comme :
 
 \begin{equation}
 T = \left\lfloor \frac{L - N_{\text{FFT}}}{H} \right\rfloor + 1
 \end{equation}
 
-where $L$ is the number of audio samples.
+où $L$ est le nombre d'échantillons audio.
 
-Table~\ref{tab:audio_config} summarizes the audio processing configuration.
+Le tableau~\ref{tab:audio_config} résume la configuration du traitement audio.
 
 \begin{table}[H]
 \centering
-\caption{Audio Processing Configuration}
+\caption{Configuration du Traitement Audio}
 \label{tab:audio_config}
 \begin{tabular}{ll}
 \toprule
-\textbf{Parameter} & \textbf{Value} \\
+\textbf{Paramètre} & \textbf{Valeur} \\
 \midrule
-Sample rate & 22050 Hz \\
-FFT window size ($N_{\text{FFT}}$) & 1024 \\
+Taux d'échantillonnage & 22050 Hz \\
+Taille fenêtre FFT ($N_{\text{FFT}}$) & 1024 \\
 Hop length ($H$) & 256 \\
-Mel filter banks ($N_{\text{mels}}$) & 80 \\
-Silence trimming threshold & 20 dB \\
-Maximum duration & 10 seconds \\
+Bancs de filtres Mel ($N_{\text{mels}}$) & 80 \\
+Seuil de suppression des silences & 20 dB \\
+Durée maximale & 10 secondes \\
 \bottomrule
 \end{tabular}
 \end{table}
 
-\subsection{MFCC Extraction}
+\subsection{Extraction des MFCC}
 
-In addition to Mel spectrograms, we extract Mel-Frequency Cepstral Coefficients (MFCCs) for evaluation purposes. MFCCs capture the spectral envelope of speech and are commonly used in the Mel Cepstral Distortion (MCD) metric for evaluating synthesis quality. We extract 13 MFCC coefficients per frame using the same FFT and hop length parameters.
+En plus des Mel spectrogrammes, nous extrayons les Coefficients Cepstraux à Fréquence Mel (MFCC) à des fins d'évaluation. Les MFCC capturent l'enveloppe spectrale de la parole et sont couramment utilisés dans la métrique de Distorsion Cepstrale Mel (MCD) pour évaluer la qualité de la synthèse. Nous extrayons 13 coefficients MFCC par trame en utilisant les mêmes paramètres FFT et hop length.
 
-\subsection{Processed Data Output}
+\subsection{Données Traitées en Sortie}
 
-The preprocessing pipeline produces:
+Le pipeline de prétraitement produit :
 \begin{itemize}
-    \item Trimmed WAV files at 22050\,Hz (\texttt{data/processed/*.wav}).
-    \item Mel spectrogram arrays saved as NumPy files (\texttt{data/processed/mels/*.npy}).
-    \item Updated metadata CSV with duration and alignment information.
+    \item Des fichiers WAV nettoyés à 22050\,Hz (\texttt{data/processed/*.wav}).
+    \item Des tableaux de Mel spectrogrammes sauvegardés en fichiers NumPy (\texttt{data/processed/mels/*.npy}).
+    \item Un fichier CSV de métadonnées mis à jour avec les informations de durée et d'alignement.
 \end{itemize}
 
 % ======================================================
-\section{TTS Model Architecture and Transfer Learning}
+\section{Architecture du Modèle TTS et Apprentissage par Transfert}
 \label{sec:architecture}
 % ======================================================
 
-\subsection{System Overview}
+\subsection{Vue d'Ensemble du Système}
 
-Our TTS system follows the modern two-component architecture:
+Notre système TTS suit l'architecture moderne à deux composants :
 
 \begin{equation}
-\text{Text} \xrightarrow{\text{Acoustic Model}} \text{Mel Spectrogram} \xrightarrow{\text{Vocoder}} \text{Waveform}
+\text{Texte} \xrightarrow{\text{Modèle Acoustique}} \text{Mel Spectrogramme} \xrightarrow{\text{Vocodeur}} \text{Forme d'Onde}
 \end{equation}
 
-The acoustic model converts text token sequences into Mel spectrogram frames, and the vocoder synthesizes an audio waveform from the spectrogram.
+Le modèle acoustique convertit les séquences de tokens textuels en trames de Mel spectrogramme, et le vocodeur synthétise une forme d'onde audio à partir du spectrogramme.
 
-\subsection{Acoustic Model Architecture}
+\subsection{Architecture du Modèle Acoustique}
 
-We define a Tacotron~2-inspired architecture adapted for Hassaniya Arabic. The model comprises an encoder and a decoder.
+Nous définissons une architecture inspirée de Tacotron~2 adaptée pour l'arabe hassaniya. Le modèle comprend un encodeur et un décodeur.
 
-\subsubsection{Encoder}
+\subsubsection{Encodeur}
 
-The encoder converts character ID sequences into continuous hidden representations:
-
-\begin{enumerate}
-    \item \textbf{Embedding layer:} Maps each character ID to a 256-dimensional vector.
-    \item \textbf{Convolutional stack:} Three 1D convolutional layers (kernel size 5, BatchNorm, ReLU, 50\% dropout) extract local character patterns and contextual features.
-    \item \textbf{Bidirectional LSTM:} A 2-layer bidirectional LSTM captures long-range dependencies in both directions, producing a 256-dimensional output per time step.
-\end{enumerate}
-
-\subsubsection{Decoder}
-
-The decoder generates Mel spectrogram frames from the encoder output:
+L'encodeur convertit les séquences d'identifiants de caractères en représentations cachées continues :
 
 \begin{enumerate}
-    \item \textbf{LSTM layers:} Two LSTM layers with 256 hidden units process the combined encoder output and previous Mel frame.
-    \item \textbf{Mel projection:} A linear layer projects the LSTM output to 80 Mel bands per frame.
-    \item \textbf{Stop token:} A sigmoid-activated linear layer predicts when to stop generation.
+    \item \textbf{Couche d'embedding :} Associe chaque identifiant de caractère à un vecteur de dimension 256.
+    \item \textbf{Pile de convolutions :} Trois couches convolutionnelles 1D (noyau de taille 5, BatchNorm, ReLU, dropout 50\%) extraient les motifs de caractères locaux et les caractéristiques contextuelles.
+    \item \textbf{LSTM bidirectionnel :} Un LSTM bidirectionnel à 2 couches capture les dépendances à longue portée dans les deux directions, produisant une sortie de dimension 256 par pas de temps.
 \end{enumerate}
 
-Table~\ref{tab:model_params} presents the model parameter count.
+\subsubsection{Décodeur}
+
+Le décodeur génère des trames de Mel spectrogramme à partir de la sortie de l'encodeur :
+
+\begin{enumerate}
+    \item \textbf{Couches LSTM :} Deux couches LSTM avec 256 unités cachées traitent la sortie combinée de l'encodeur et la trame Mel précédente.
+    \item \textbf{Projection Mel :} Une couche linéaire projette la sortie du LSTM vers 80 bandes Mel par trame.
+    \item \textbf{Token d'arrêt :} Une couche linéaire activée par sigmoïde prédit quand arrêter la génération.
+\end{enumerate}
+
+Le tableau~\ref{tab:model_params} présente le nombre de paramètres du modèle.
 
 \begin{table}[H]
 \centering
-\caption{Model Parameter Summary}
+\caption{Résumé des Paramètres du Modèle}
 \label{tab:model_params}
 \begin{tabular}{lrr}
 \toprule
-\textbf{Component} & \textbf{Parameters} & \textbf{Percentage} \\
+\textbf{Composant} & \textbf{Paramètres} & \textbf{Pourcentage} \\
 \midrule
-Encoder (Embedding) & $\sim$12,800 & 0.6\% \\
-Encoder (Convolutions) & $\sim$985,000 & 46.8\% \\
-Encoder (BiLSTM) & $\sim$790,000 & 37.5\% \\
-Decoder (LSTM + Projections) & $\sim$319,000 & 15.1\% \\
+Encodeur (Embedding) & $\sim$12 800 & 0,6\% \\
+Encodeur (Convolutions) & $\sim$985 000 & 46,8\% \\
+Encodeur (BiLSTM) & $\sim$790 000 & 37,5\% \\
+Décodeur (LSTM + Projections) & $\sim$319 000 & 15,1\% \\
 \midrule
-\textbf{Total} & $\sim$\textbf{2,107,000} & 100\% \\
+\textbf{Total} & $\sim$\textbf{2 107 000} & 100\% \\
 \bottomrule
 \end{tabular}
 \end{table}
 
-\subsection{Transfer Learning Strategy}
+\subsection{Stratégie d'Apprentissage par Transfert}
 
-Given our limited dataset of 294 samples, training from scratch would lead to severe overfitting and poor generalization. Instead, we propose a transfer learning approach:
+Étant donné notre jeu de données limité de 294 échantillons, un entraînement à partir de zéro conduirait à un sur-apprentissage sévère et une mauvaise généralisation. Nous proposons plutôt une approche d'apprentissage par transfert :
 
 \begin{enumerate}
-    \item \textbf{Pretrained base model:} Start from a TTS model pretrained on a large Arabic (MSA) or multilingual speech corpus. The encoder layers capture general Arabic phonological knowledge.
+    \item \textbf{Modèle de base pré-entraîné :} Partir d'un modèle TTS pré-entraîné sur un grand corpus vocal arabe (ASM) ou multilingue. Les couches de l'encodeur capturent les connaissances phonologiques arabes générales.
 
-    \item \textbf{Selective freezing:} Freeze the encoder layers (embedding and convolutional stack) to preserve the learned Arabic representations. Only the decoder is initially trainable.
+    \item \textbf{Gel sélectif :} Geler les couches de l'encodeur (embedding et pile de convolutions) pour préserver les représentations arabes apprises. Seul le décodeur est initialement entraînable.
 
-    \item \textbf{Gradual unfreezing:} After initial fine-tuning stabilizes, progressively unfreeze encoder layers (starting from the top) to allow the model to adapt Arabic representations toward Hassaniya-specific patterns.
+    \item \textbf{Dégel progressif :} Après la stabilisation de l'affinage initial, dégeler progressivement les couches de l'encodeur (en commençant par le haut) pour permettre au modèle d'adapter les représentations arabes vers les motifs spécifiques au hassaniya.
 
-    \item \textbf{Low learning rate:} Use a reduced learning rate ($\eta = 10^{-4}$) with cosine annealing to prevent catastrophic forgetting of pretrained knowledge.
+    \item \textbf{Taux d'apprentissage bas :} Utiliser un taux d'apprentissage réduit ($\eta = 10^{-4}$) avec un recuit cosinus pour prévenir l'oubli catastrophique des connaissances pré-entraînées.
 \end{enumerate}
 
-Table~\ref{tab:transfer_config} summarizes the fine-tuning configuration.
+Le tableau~\ref{tab:transfer_config} résume la configuration d'affinage.
 
 \begin{table}[H]
 \centering
-\caption{Transfer Learning Configuration}
+\caption{Configuration de l'Apprentissage par Transfert}
 \label{tab:transfer_config}
 \begin{tabular}{ll}
 \toprule
-\textbf{Hyperparameter} & \textbf{Value} \\
+\textbf{Hyperparamètre} & \textbf{Valeur} \\
 \midrule
-Learning rate & $1 \times 10^{-4}$ \\
-Batch size & 16 \\
-Epochs & 100 \\
-Warmup steps & 500 \\
-Gradient clipping & 1.0 \\
-Weight decay & $1 \times 10^{-6}$ \\
-Scheduler & Cosine annealing \\
-Frozen layers (Phase 1) & Encoder embedding + convolutions \\
+Taux d'apprentissage & $1 \times 10^{-4}$ \\
+Taille du lot & 16 \\
+Époques & 100 \\
+Étapes de montée en charge & 500 \\
+Écrêtage du gradient & 1,0 \\
+Décroissance des poids & $1 \times 10^{-6}$ \\
+Planificateur & Recuit cosinus \\
+Couches gelées (Phase 1) & Embedding + convolutions de l'encodeur \\
 \bottomrule
 \end{tabular}
 \end{table}
 
-The rationale for this strategy is that the encoder captures language-general and Arabic-specific phonological knowledge (e.g., consonant clusters, vowel patterns) that is partially shared between MSA and Hassaniya, while the decoder must learn the dialect-specific prosody and intonation of Hassaniya.
+La justification de cette stratégie est que l'encodeur capture les connaissances phonologiques générales et spécifiques à l'arabe (par exemple, les groupes consonantiques, les schémas vocaliques) qui sont partiellement partagées entre l'ASM et le hassaniya, tandis que le décodeur doit apprendre la prosodie et l'intonation spécifiques au dialecte hassaniya.
 
-\subsection{Vocoder}
+\subsection{Vocodeur}
 
-For waveform generation from Mel spectrograms, we propose using a pretrained \textbf{HiFi-GAN} vocoder \citep{kong2020hifi}. HiFi-GAN offers:
+Pour la génération de formes d'onde à partir des Mel spectrogrammes, nous proposons d'utiliser un vocodeur \textbf{HiFi-GAN} pré-entraîné \citep{kong2020hifi}. HiFi-GAN offre :
 \begin{itemize}
-    \item Real-time waveform synthesis.
-    \item High-quality output even without dialect-specific training.
-    \item Efficient inference suitable for deployment.
+    \item Une synthèse de forme d'onde en temps réel.
+    \item Une sortie de haute qualité même sans entraînement spécifique au dialecte.
+    \item Une inférence efficace adaptée au déploiement.
 \end{itemize}
 
-Fine-tuning the vocoder on Hassaniya audio would further improve quality, but the pretrained version provides a reasonable baseline.
+L'affinage du vocodeur sur l'audio hassaniya améliorerait davantage la qualité, mais la version pré-entraînée fournit une référence raisonnable.
 
 % ======================================================
-\section{Experiments and Results}
+\section{Expériences et Résultats}
 \label{sec:experiments}
 % ======================================================
 
-\subsection{Experimental Setup}
+\subsection{Configuration Expérimentale}
 
-Our experiments were conducted with the following objectives:
-
-\begin{enumerate}
-    \item Validate the preprocessing pipeline on the complete Hassaniya dataset.
-    \item Generate baseline synthesis using gTTS for comparison.
-    \item Evaluate the quality gap between standard Arabic TTS and natural Hassaniya speech.
-    \item Demonstrate the model architecture through forward pass verification.
-\end{enumerate}
-
-The implementation uses Python with PyTorch, Librosa, and gTTS, executed in Google Colab.
-
-\subsection{Preprocessing Results}
-
-The preprocessing pipeline successfully processed all 294 samples:
-
-\begin{itemize}
-    \item \textbf{Text normalization:} Reduced the character inventory from 55 to 38 unique characters.
-    \item \textbf{Audio extraction:} Successfully decoded all audio samples from Parquet format.
-    \item \textbf{Silence trimming:} Removed non-speech segments, improving data efficiency.
-    \item \textbf{Feature extraction:} Computed 80-band Mel spectrograms for all samples.
-\end{itemize}
-
-\subsection{Baseline Synthesis}
-
-We used Google Text-to-Speech (gTTS) as a baseline system. gTTS provides high-quality MSA synthesis but cannot produce Hassaniya-specific speech. This serves as both a pipeline validation tool and a reference point for evaluating future dialect-specific models.
-
-Selected Hassaniya transcriptions were synthesized using gTTS's Arabic (\texttt{lang='ar'}) voice. The generated audio was compared against original recordings through:
+Nos expériences ont été menées avec les objectifs suivants :
 
 \begin{enumerate}
-    \item Visual comparison of Mel spectrograms (qualitative).
-    \item Mel Cepstral Distortion measurement (quantitative).
-    \item Informal listening evaluation (perceptual).
+    \item Valider le pipeline de prétraitement sur le jeu de données hassaniya complet.
+    \item Générer une synthèse de référence en utilisant gTTS pour comparaison.
+    \item Évaluer l'écart de qualité entre le TTS en arabe standard et la parole hassaniya naturelle.
+    \item Démontrer l'architecture du modèle par vérification de la passe avant.
 \end{enumerate}
 
-\subsection{Spectral Analysis}
+L'implémentation utilise Python avec PyTorch, Librosa et gTTS, exécutée dans Google Colab.
 
-Visual comparison of Mel spectrograms between original Hassaniya recordings and gTTS-generated speech reveals clear differences:
+\subsection{Résultats du Prétraitement}
+
+Le pipeline de prétraitement a traité avec succès les 294 échantillons :
 
 \begin{itemize}
-    \item \textbf{Prosodic patterns:} Hassaniya speech exhibits distinct intonation contours not captured by MSA synthesis.
-    \item \textbf{Temporal structure:} Duration patterns differ between natural dialect speech and standard Arabic synthesis.
-    \item \textbf{Spectral energy distribution:} Formant patterns in Hassaniya reflect dialect-specific vowel qualities.
+    \item \textbf{Normalisation du texte :} Réduction de l'inventaire de caractères de 55 à 38 caractères uniques.
+    \item \textbf{Extraction audio :} Décodage réussi de tous les échantillons audio depuis le format Parquet.
+    \item \textbf{Suppression des silences :} Suppression des segments non vocaux, améliorant l'efficacité des données.
+    \item \textbf{Extraction de caractéristiques :} Calcul des Mel spectrogrammes à 80 bandes pour tous les échantillons.
 \end{itemize}
 
-These differences confirm that a dialect-specific model is necessary for natural-sounding Hassaniya TTS.
+\subsection{Synthèse de Référence}
 
-\subsection{Mel Cepstral Distortion}
+Nous avons utilisé Google Text-to-Speech (gTTS) comme système de référence. gTTS fournit une synthèse ASM de haute qualité mais ne peut pas produire de parole spécifique au hassaniya. Cela sert à la fois d'outil de validation du pipeline et de point de référence pour l'évaluation de futurs modèles spécifiques au dialecte.
 
-Mel Cepstral Distortion (MCD) measures the spectral distance between reference and synthesized speech. It is computed as:
+Des transcriptions hassaniya sélectionnées ont été synthétisées en utilisant la voix arabe (\texttt{lang='ar'}) de gTTS. L'audio généré a été comparé aux enregistrements originaux par :
+
+\begin{enumerate}
+    \item Comparaison visuelle des Mel spectrogrammes (qualitative).
+    \item Mesure de la Distorsion Cepstrale Mel (quantitative).
+    \item Évaluation auditive informelle (perceptuelle).
+\end{enumerate}
+
+\subsection{Analyse Spectrale}
+
+La comparaison visuelle des Mel spectrogrammes entre les enregistrements originaux hassaniya et la parole générée par gTTS révèle des différences claires :
+
+\begin{itemize}
+    \item \textbf{Schémas prosodiques :} La parole hassaniya présente des contours d'intonation distincts non capturés par la synthèse ASM.
+    \item \textbf{Structure temporelle :} Les schémas de durée diffèrent entre la parole dialectale naturelle et la synthèse en arabe standard.
+    \item \textbf{Distribution de l'énergie spectrale :} Les schémas de formants en hassaniya reflètent les qualités vocaliques spécifiques au dialecte.
+\end{itemize}
+
+Ces différences confirment qu'un modèle spécifique au dialecte est nécessaire pour un TTS hassaniya naturel.
+
+\subsection{Distorsion Cepstrale Mel}
+
+La Distorsion Cepstrale Mel (MCD) mesure la distance spectrale entre la parole de référence et la parole synthétisée. Elle est calculée comme :
 
 \begin{equation}
 \text{MCD} = \frac{1}{T} \sum_{t=1}^{T} \sqrt{2 \sum_{k=1}^{K} (c_k^{\text{ref}}(t) - c_k^{\text{syn}}(t))^2}
 \end{equation}
 
-where $c_k^{\text{ref}}(t)$ and $c_k^{\text{syn}}(t)$ are the $k$-th MFCC coefficients at frame $t$ of the reference and synthesized speech, respectively, and $K = 13$.
+où $c_k^{\text{ref}}(t)$ et $c_k^{\text{syn}}(t)$ sont les $k$-ièmes coefficients MFCC à la trame $t$ de la parole de référence et synthétisée, respectivement, et $K = 13$.
 
-For same-speaker TTS systems, an MCD below 8\,dB is generally considered good quality. Our baseline measurements between original Hassaniya recordings and gTTS output show MCD values significantly above this threshold, which is expected since:
+Pour les systèmes TTS du même locuteur, une MCD inférieure à 8\,dB est généralement considérée comme de bonne qualité. Nos mesures de référence entre les enregistrements originaux hassaniya et la sortie gTTS montrent des valeurs de MCD significativement au-dessus de ce seuil, ce qui est attendu puisque :
 
 \begin{enumerate}
-    \item gTTS uses an MSA voice, not a Hassaniya speaker.
-    \item The prosodic patterns differ fundamentally between MSA and Hassaniya.
-    \item Recording conditions of the original data are non-studio quality.
+    \item gTTS utilise une voix ASM, pas un locuteur hassaniya.
+    \item Les schémas prosodiques diffèrent fondamentalement entre l'ASM et le hassaniya.
+    \item Les conditions d'enregistrement des données originales ne sont pas de qualité studio.
 \end{enumerate}
 
-These results quantitatively confirm the need for dialect-specific fine-tuning.
+Ces résultats confirment quantitativement le besoin d'un affinage spécifique au dialecte.
 
-\subsection{Architecture Validation}
+\subsection{Validation de l'Architecture}
 
-The Tacotron~2-inspired model architecture was validated through forward pass testing:
+L'architecture du modèle inspirée de Tacotron~2 a été validée par un test de passe avant :
 
 \begin{itemize}
-    \item \textbf{Input:} Character ID sequence of shape $[1 \times 20]$ (batch size 1, 20 characters).
-    \item \textbf{Output:} Mel spectrogram of shape $[1 \times 20 \times 80]$ (20 frames, 80 Mel bands) plus stop token predictions.
-    \item \textbf{Model size:} Approximately 2.1M parameters ($\sim$8\,MB in float32).
+    \item \textbf{Entrée :} Séquence d'identifiants de caractères de forme $[1 \times 20]$ (taille de lot 1, 20 caractères).
+    \item \textbf{Sortie :} Mel spectrogramme de forme $[1 \times 20 \times 80]$ (20 trames, 80 bandes Mel) plus prédictions de token d'arrêt.
+    \item \textbf{Taille du modèle :} Environ 2,1M de paramètres ($\sim$8\,Mo en float32).
 \end{itemize}
 
-The model produces outputs of the expected shape, confirming the architecture is correctly implemented and ready for training when sufficient compute resources are available.
+Le modèle produit des sorties de la forme attendue, confirmant que l'architecture est correctement implémentée et prête pour l'entraînement lorsque des ressources de calcul suffisantes seront disponibles.
 
 % ======================================================
-\section{Limitations and Future Work}
+\section{Limitations et Travaux Futurs}
 \label{sec:limitations}
 % ======================================================
 
-\subsection{Current Limitations}
+\subsection{Limitations Actuelles}
 
-This project is a proof of concept with several important limitations:
+Ce projet est une preuve de concept avec plusieurs limitations importantes :
 
 \begin{enumerate}
-    \item \textbf{Dataset size:} 294 samples is far below the minimum typically required for neural TTS training (5,000+ utterances for fine-tuning, 10,000+ hours for training from scratch). The small dataset prevents meaningful model training and limits our evaluation to pipeline validation and baseline comparison.
+    \item \textbf{Taille du jeu de données :} 294 échantillons est bien en dessous du minimum typiquement requis pour l'entraînement TTS neuronal (5 000+ énoncés pour l'affinage, 10 000+ heures pour l'entraînement à partir de zéro). Le petit jeu de données empêche un entraînement significatif du modèle et limite notre évaluation à la validation du pipeline et la comparaison de référence.
 
-    \item \textbf{Speaker diversity:} The dataset contains multiple speakers without speaker identification, making single-speaker fine-tuning impossible without additional annotation.
+    \item \textbf{Diversité des locuteurs :} Le jeu de données contient plusieurs locuteurs sans identification de locuteur, rendant l'affinage mono-locuteur impossible sans annotation supplémentaire.
 
-    \item \textbf{Recording quality:} Non-studio recordings introduce background noise and variable audio quality, which degrade both feature extraction and synthesis quality.
+    \item \textbf{Qualité d'enregistrement :} Les enregistrements non-studio introduisent du bruit de fond et une qualité audio variable, qui dégradent à la fois l'extraction de caractéristiques et la qualité de synthèse.
 
-    \item \textbf{No fine-tuning results:} Due to computational constraints and time limitations, we did not fine-tune the defined architecture. Results are limited to baseline (gTTS) synthesis and pipeline validation.
+    \item \textbf{Pas de résultats d'affinage :} En raison de contraintes computationnelles et de temps, nous n'avons pas affiné l'architecture définie. Les résultats sont limités à la synthèse de référence (gTTS) et à la validation du pipeline.
 
-    \item \textbf{Evaluation limitations:} Without a fine-tuned model, we cannot report MOS (Mean Opinion Score) from native Hassaniya speaker evaluations, which is the gold standard for TTS quality assessment.
+    \item \textbf{Limitations de l'évaluation :} Sans modèle affiné, nous ne pouvons pas rapporter de MOS (Score d'Opinion Moyen) provenant d'évaluations par des locuteurs natifs hassaniya, qui est l'étalon-or pour l'évaluation de la qualité TTS.
 
-    \item \textbf{Phonological coverage:} Our character-level tokenization does not capture all Hassaniya-specific phonological phenomena, particularly gemination, emphatic consonants, and dialect-specific vowel qualities.
+    \item \textbf{Couverture phonologique :} Notre tokenisation au niveau des caractères ne capture pas tous les phénomènes phonologiques spécifiques au hassaniya, en particulier la gémination, les consonnes emphatiques et les qualités vocaliques spécifiques au dialecte.
 \end{enumerate}
 
-\subsection{Future Work}
+\subsection{Travaux Futurs}
 
-Based on our findings, we recommend the following directions for future research:
+Sur la base de nos résultats, nous recommandons les directions suivantes pour la recherche future :
 
 \begin{enumerate}
-    \item \textbf{Dataset expansion:} Collect 5,000+ annotated Hassaniya recordings from native speakers in controlled recording conditions. This is the single most impactful improvement.
+    \item \textbf{Expansion du jeu de données :} Collecter 5 000+ enregistrements hassaniya annotés auprès de locuteurs natifs dans des conditions d'enregistrement contrôlées. C'est l'amélioration la plus impactante.
 
-    \item \textbf{Hassaniya phoneme inventory:} Develop a dialect-specific phoneme set and grapheme-to-phoneme (G2P) rules, enabling phoneme-level tokenization for improved synthesis accuracy.
+    \item \textbf{Inventaire de phonèmes hassaniya :} Développer un ensemble de phonèmes spécifique au dialecte et des règles de conversion graphème-phonème (G2P), permettant une tokenisation au niveau des phonèmes pour une précision de synthèse améliorée.
 
-    \item \textbf{VITS fine-tuning:} Fine-tune the VITS end-to-end model on the expanded dataset using GPU resources (e.g., Google Colab Pro or cloud compute). VITS's single-stage architecture simplifies the training pipeline.
+    \item \textbf{Affinage VITS :} Affiner le modèle bout-en-bout VITS sur le jeu de données élargi en utilisant des ressources GPU (par exemple, Google Colab Pro ou calcul cloud). L'architecture mono-étape de VITS simplifie le pipeline d'entraînement.
 
-    \item \textbf{Multi-speaker TTS:} Incorporate speaker embeddings to handle dialect variation across different Hassaniya-speaking regions.
+    \item \textbf{TTS multi-locuteur :} Incorporer des embeddings de locuteur pour gérer la variation dialectale à travers les différentes régions hassanophones.
 
-    \item \textbf{Linguistic collaboration:} Partner with Mauritanian linguists to validate phonological decisions and ensure the system reflects authentic Hassaniya speech patterns.
+    \item \textbf{Collaboration linguistique :} Collaborer avec des linguistes mauritaniens pour valider les décisions phonologiques et s'assurer que le système reflète les schémas de parole hassaniya authentiques.
 
-    \item \textbf{Web-based demo:} Build an interactive web application for Hassaniya TTS, making the technology accessible to the broader community.
+    \item \textbf{Démo web :} Construire une application web interactive pour le TTS hassaniya, rendant la technologie accessible à la communauté plus large.
 
-    \item \textbf{Bidirectional systems:} Extend the work to Hassaniya Automatic Speech Recognition (ASR), creating a complete speech processing toolkit for the dialect.
+    \item \textbf{Systèmes bidirectionnels :} Étendre le travail à la Reconnaissance Automatique de la Parole (RAP) hassaniya, créant un toolkit complet de traitement vocal pour le dialecte.
 \end{enumerate}
 
 % ======================================================
@@ -687,24 +687,24 @@ Based on our findings, we recommend the following directions for future research
 \label{sec:conclusion}
 % ======================================================
 
-This project demonstrates the feasibility of building a Text-To-Speech system for Hassaniya Arabic through transfer learning. Despite the significant constraint of having only 294 audio-text pairs, we successfully:
+Ce projet démontre la faisabilité de la construction d'un système de synthèse vocale pour l'arabe hassaniya par apprentissage par transfert. Malgré la contrainte significative de ne disposer que de 294 paires audio-texte, nous avons réussi à :
 
 \begin{enumerate}
-    \item \textbf{Built a complete preprocessing pipeline} tailored to Hassaniya Arabic, including text normalization that accounts for the dialect's non-standardized orthography, character-level tokenization, and audio feature extraction with Mel spectrogram computation.
+    \item \textbf{Construire un pipeline de prétraitement complet} adapté à l'arabe hassaniya, incluant une normalisation du texte qui tient compte de l'orthographe non standardisée du dialecte, une tokenisation au niveau des caractères et une extraction de caractéristiques audio avec calcul de Mel spectrogrammes.
 
-    \item \textbf{Defined a suitable neural architecture} based on Tacotron~2 principles, with a transfer learning strategy that freezes pretrained Arabic encoder layers while fine-tuning the decoder on dialect-specific data.
+    \item \textbf{Définir une architecture neuronale adaptée} basée sur les principes de Tacotron~2, avec une stratégie d'apprentissage par transfert qui gèle les couches de l'encodeur arabe pré-entraîné tout en affinant le décodeur sur les données spécifiques au dialecte.
 
-    \item \textbf{Established a quantitative baseline} using gTTS synthesis and Mel Cepstral Distortion measurements, confirming the expected quality gap between standard Arabic TTS and natural Hassaniya speech.
+    \item \textbf{Établir une référence quantitative} en utilisant la synthèse gTTS et les mesures de Distorsion Cepstrale Mel, confirmant l'écart de qualité attendu entre le TTS en arabe standard et la parole hassaniya naturelle.
 
-    \item \textbf{Created a documented, reproducible codebase} organized as a four-notebook pipeline (exploration, annotation, preprocessing, demonstration) with supporting Python modules, ready for extension by future researchers.
+    \item \textbf{Créer une base de code documentée et reproductible} organisée en un pipeline de quatre notebooks (exploration, annotation, prétraitement, démonstration) avec des modules Python de support, prête à être étendue par de futurs chercheurs.
 \end{enumerate}
 
-The core finding of this work is that \textbf{transfer learning is the most viable path} for Hassaniya TTS given current data constraints. The phonological similarity between Hassaniya and MSA provides a foundation for knowledge transfer, while the dialect-specific prosody and vocabulary necessitate targeted fine-tuning.
+La conclusion principale de ce travail est que l'\textbf{apprentissage par transfert est la voie la plus viable} pour le TTS hassaniya compte tenu des contraintes actuelles en matière de données. La similarité phonologique entre le hassaniya et l'ASM fournit une base pour le transfert de connaissances, tandis que la prosodie et le vocabulaire spécifiques au dialecte nécessitent un affinage ciblé.
 
-Hassaniya Arabic, spoken by millions yet almost invisible in digital language technology, deserves dedicated speech tools. This proof of concept takes a first step toward that goal, providing both a technical pipeline and a documented understanding of the challenges involved. We hope this work inspires further research into speech technology for underrepresented Arabic dialects.
+L'arabe hassaniya, parlé par des millions de personnes mais presque invisible dans la technologie linguistique numérique, mérite des outils vocaux dédiés. Cette preuve de concept constitue un premier pas vers cet objectif, fournissant à la fois un pipeline technique et une compréhension documentée des défis impliqués. Nous espérons que ce travail inspirera de futures recherches en technologie vocale pour les dialectes arabes sous-représentés.
 
 % ======================================================
-% REFERENCES
+% RÉFÉRENCES
 % ======================================================
 \newpage
 \bibliographystyle{plainnat}
@@ -712,9 +712,9 @@ Hassaniya Arabic, spoken by millions yet almost invisible in digital language te
 \begin{thebibliography}{99}
 
 \bibitem[Casanova et~al.(2022)]{casanova2022yourtts}
-Casanova, E., Weber, J., Shulby, C.~D., Junior, A.~C., G{\"o}lge, E., and Ponti, M.~A.
+Casanova, E., Weber, J., Shulby, C.~D., Junior, A.~C., G{\"o}lge, E., et Ponti, M.~A.
 \newblock YourTTS: Towards Zero-Shot Multi-Speaker TTS and Zero-Shot Voice Conversion for Everyone.
-\newblock In \emph{Proceedings of the 39th International Conference on Machine Learning (ICML)}, 2022.
+\newblock Dans \emph{Actes de la 39e Conférence Internationale sur l'Apprentissage Automatique (ICML)}, 2022.
 
 \bibitem[Habash(2010)]{habash2010introduction}
 Habash, N.~Y.
@@ -722,75 +722,75 @@ Habash, N.~Y.
 \newblock \emph{Synthesis Lectures on Human Language Technologies}, 3(1):1--187, 2010.
 
 \bibitem[Kim et~al.(2021)]{kim2021conditional}
-Kim, J., Kong, J., and Son, J.
+Kim, J., Kong, J., et Son, J.
 \newblock Conditional Variational Autoencoder with Adversarial Learning for End-to-End Text-to-Speech.
-\newblock In \emph{Proceedings of the 38th International Conference on Machine Learning (ICML)}, pp. 5530--5540, 2021.
+\newblock Dans \emph{Actes de la 38e Conférence Internationale sur l'Apprentissage Automatique (ICML)}, pp. 5530--5540, 2021.
 
 \bibitem[Kong et~al.(2020)]{kong2020hifi}
-Kong, J., Kim, J., and Bae, J.
+Kong, J., Kim, J., et Bae, J.
 \newblock HiFi-GAN: Generative Adversarial Networks for Efficient and High Fidelity Speech Synthesis.
-\newblock In \emph{Advances in Neural Information Processing Systems (NeurIPS)}, 33:17022--17033, 2020.
+\newblock Dans \emph{Advances in Neural Information Processing Systems (NeurIPS)}, 33:17022--17033, 2020.
 
 \bibitem[Ren et~al.(2020)]{ren2020fastspeech}
-Ren, Y., Hu, C., Tan, X., Qin, T., Zhao, S., Zhao, Z., and Liu, T.~Y.
+Ren, Y., Hu, C., Tan, X., Qin, T., Zhao, S., Zhao, Z., et Liu, T.~Y.
 \newblock FastSpeech 2: Fast and High-Quality End-to-End Text to Speech.
-\newblock In \emph{International Conference on Learning Representations (ICLR)}, 2020.
+\newblock Dans \emph{International Conference on Learning Representations (ICLR)}, 2020.
 
 \bibitem[Shen et~al.(2018)]{shen2018natural}
 Shen, J., Pang, R., Weiss, R.~J., Schuster, M., Jaitly, N., Yang, Z., Chen, Z., Zhang, Y., Wang, Y., Skerrv-Ryan, R., et~al.
 \newblock Natural TTS Synthesis by Conditioning WaveNet on Mel Spectrogram Predictions.
-\newblock In \emph{IEEE International Conference on Acoustics, Speech and Signal Processing (ICASSP)}, pp. 4779--4783, 2018.
+\newblock Dans \emph{IEEE International Conference on Acoustics, Speech and Signal Processing (ICASSP)}, pp. 4779--4783, 2018.
 
 \bibitem[van~den Oord et~al.(2016)]{van2016wavenet}
-van~den Oord, A., Dieleman, S., Zen, H., Simonyan, K., Vinyals, O., Graves, A., Kalchbrenner, N., Senior, A., and Kavukcuoglu, K.
+van~den Oord, A., Dieleman, S., Zen, H., Simonyan, K., Vinyals, O., Graves, A., Kalchbrenner, N., Senior, A., et Kavukcuoglu, K.
 \newblock WaveNet: A Generative Model for Raw Audio.
 \newblock \emph{arXiv preprint arXiv:1609.03499}, 2016.
 
 \bibitem[Wang et~al.(2017)]{wang2017tacotron}
 Wang, Y., Skerry-Ryan, R., Stanton, D., Wu, Y., Weiss, R.~J., Jaitly, N., Yang, Z., Xiao, Y., Chen, Z., Bengio, S., et~al.
 \newblock Tacotron: Towards End-to-End Speech Synthesis.
-\newblock In \emph{Proceedings of Interspeech}, pp. 4006--4010, 2017.
+\newblock Dans \emph{Actes d'Interspeech}, pp. 4006--4010, 2017.
 
 \bibitem[Xu et~al.(2020)]{xu2020lrspeech}
-Xu, J., Tan, X., Ren, Y., Qin, T., Li, J., Zhao, S., and Liu, T.~Y.
+Xu, J., Tan, X., Ren, Y., Qin, T., Li, J., Zhao, S., et Liu, T.~Y.
 \newblock LRSpeech: Extremely Low-Resource Speech Synthesis and Recognition.
-\newblock In \emph{Proceedings of the 26th ACM SIGKDD International Conference on Knowledge Discovery \& Data Mining}, pp. 2802--2812, 2020.
+\newblock Dans \emph{Actes de la 26e Conférence ACM SIGKDD sur la Découverte de Connaissances et l'Exploration de Données}, pp. 2802--2812, 2020.
 
 \end{thebibliography}
 
-% ===================== APPENDIX =====================
+% ===================== ANNEXES =====================
 \newpage
 \appendix
 
-\section{Hassaniya Character Vocabulary}
+\section{Vocabulaire de Caractères Hassaniya}
 \label{app:vocab}
 
-The complete character set used by our TTS system after normalization:
+Le jeu de caractères complet utilisé par notre système TTS après normalisation :
 
 \begin{table}[H]
 \centering
-\caption{Hassaniya TTS Vocabulary}
+\caption{Vocabulaire TTS Hassaniya}
 \begin{tabular}{clcl}
 \toprule
 \textbf{ID} & \textbf{Token} & \textbf{ID} & \textbf{Token} \\
 \midrule
 0 & \texttt{<pad>} & 1 & \texttt{<sos>} \\
 2 & \texttt{<eos>} & 3 & \texttt{<space>} \\
-4--42 & \multicolumn{3}{l}{Arabic characters (post-normalization)} \\
+4--42 & \multicolumn{3}{l}{Caractères arabes (après normalisation)} \\
 \bottomrule
 \end{tabular}
 \end{table}
 
-\section{Project Repository Structure}
+\section{Structure du Dépôt du Projet}
 \label{app:repo}
 
 \begin{verbatim}
 hassaniya-tts/
 ├── data/
-│   ├── raw/                    # Raw extracted audio files
-│   ├── processed/              # Preprocessed audio + Mel spectrograms
-│   ├── metadata.csv            # Annotated text-audio mappings
-│   └── vocab.json              # Character vocabulary
+│   ├── raw/                    # Fichiers audio bruts extraits
+│   ├── processed/              # Audio prétraité + Mel spectrogrammes
+│   ├── metadata.csv            # Correspondances texte-audio annotées
+│   └── vocab.json              # Vocabulaire de caractères
 ├── notebooks/
 │   ├── 01_data_exploration.ipynb
 │   ├── 02_annotation.ipynb
@@ -798,40 +798,40 @@ hassaniya-tts/
 │   └── 04_tts_demo.ipynb
 ├── src/
 │   ├── __init__.py
-│   ├── config.py               # Configuration constants
-│   ├── preprocessing.py        # Text preprocessing
-│   └── audio_utils.py          # Audio processing utilities
+│   ├── config.py               # Constantes de configuration
+│   ├── preprocessing.py        # Prétraitement du texte
+│   └── audio_utils.py          # Utilitaires de traitement audio
 ├── reports/
-│   └── report.tex              # This report
+│   └── report.tex              # Ce rapport
 ├── results/
-│   ├── spectrograms/           # Generated spectrograms
-│   ├── generated_audio/        # Synthesized speech
-│   └── figures/                # Plots and visualizations
-├── audios_dataset.parquet      # Original dataset
+│   ├── spectrograms/           # Spectrogrammes générés
+│   ├── generated_audio/        # Parole synthétisée
+│   └── figures/                # Graphiques et visualisations
+├── audios_dataset.parquet      # Jeu de données original
 ├── requirements.txt
 ├── README.md
 └── LICENSE
 \end{verbatim}
 
-\section{Software Dependencies}
+\section{Dépendances Logicielles}
 \label{app:dependencies}
 
 \begin{table}[H]
 \centering
-\caption{Software Stack}
+\caption{Pile Logicielle}
 \begin{tabular}{lll}
 \toprule
-\textbf{Library} & \textbf{Version} & \textbf{Purpose} \\
+\textbf{Bibliothèque} & \textbf{Version} & \textbf{Utilisation} \\
 \midrule
-Python & 3.10+ & Core language \\
-PyTorch & 2.x & Deep learning framework \\
-Librosa & 0.10+ & Audio analysis \\
-SoundFile & 0.12+ & Audio I/O \\
-Pandas & 2.x & Data manipulation \\
-NumPy & 1.x & Numerical computation \\
-Matplotlib & 3.x & Visualization \\
-Seaborn & 0.13+ & Statistical plots \\
-gTTS & 2.x & Baseline TTS synthesis \\
+Python & 3.10+ & Langage principal \\
+PyTorch & 2.x & Framework d'apprentissage profond \\
+Librosa & 0.10+ & Analyse audio \\
+SoundFile & 0.12+ & Entrée/Sortie audio \\
+Pandas & 2.x & Manipulation de données \\
+NumPy & 1.x & Calcul numérique \\
+Matplotlib & 3.x & Visualisation \\
+Seaborn & 0.13+ & Graphiques statistiques \\
+gTTS & 2.x & Synthèse TTS de référence \\
 \bottomrule
 \end{tabular}
 \end{table}
