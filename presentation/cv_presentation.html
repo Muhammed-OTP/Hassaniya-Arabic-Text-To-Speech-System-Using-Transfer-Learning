@@ -1,0 +1,1420 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Estimation de la Vitesse des Véhicules — Présentation Computer Vision</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@500;600;700&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+/* ============================================================
+   Vehicle Speed Estimation — Computer Vision Presentation
+   Palette: Université de Nouakchott (UN-FST)
+   ============================================================ */
+:root {
+  --green-900: #06351f;
+  --green-700: #0c5c34;
+  --green-600: #0f7a44;
+  --green-500: #129650;
+  --green-100: #e6f4ec;
+  --gold-600:  #c9920a;
+  --gold-500:  #e0a500;
+  --gold-400:  #f0bf3c;
+  --gold-100:  #fdf3da;
+
+  --ink:    #1b2a22;
+  --muted:  #5c6e64;
+  --paper:  #fbfbf8;
+  --paper-2:#f3f6f2;
+  --line:   #e1e8e1;
+  --white:  #ffffff;
+
+  --shadow-sm: 0 2px 8px rgba(6,53,31,0.06);
+  --shadow-md: 0 8px 30px rgba(6,53,31,0.10);
+  --shadow-lg: 0 20px 60px rgba(6,53,31,0.16);
+
+  --radius:    16px;
+  --radius-sm: 10px;
+
+  --font-head: "Poppins","Segoe UI",sans-serif;
+  --font-body: "Inter","Segoe UI",sans-serif;
+  --font-mono: "JetBrains Mono","Consolas",monospace;
+
+  --ease: cubic-bezier(0.22,0.61,0.36,1);
+}
+* { box-sizing: border-box; }
+html, body {
+  margin: 0; padding: 0; height: 100%; overflow: hidden;
+  font-family: var(--font-body);
+  color: var(--ink);
+  background: var(--paper);
+  -webkit-font-smoothing: antialiased;
+}
+
+/* ── Layout ── */
+.deck { position: relative; width: 100%; height: 100%; }
+
+.bg-decor {
+  position: fixed; inset: 0; z-index: 0;
+  pointer-events: none; overflow: hidden;
+}
+.bg-decor::before, .bg-decor::after {
+  content: ""; position: absolute; border-radius: 50%;
+  filter: blur(60px); opacity: 0.35;
+}
+.bg-decor::before {
+  width: 520px; height: 520px;
+  background: radial-gradient(circle at 30% 30%, var(--green-100), transparent 70%);
+  top: -180px; right: -160px;
+}
+.bg-decor::after {
+  width: 460px; height: 460px;
+  background: radial-gradient(circle at 70% 70%, var(--gold-100), transparent 70%);
+  bottom: -160px; left: -140px;
+}
+
+.slide {
+  position: absolute; inset: 0;
+  display: flex; flex-direction: column;
+  padding: 64px 96px 96px;
+  opacity: 0; visibility: hidden;
+  transform: translateY(24px) scale(0.99);
+  transition: opacity .5s var(--ease), transform .6s var(--ease);
+  z-index: 1; overflow-y: auto;
+}
+.slide::-webkit-scrollbar { width: 8px; }
+.slide::-webkit-scrollbar-thumb { background: var(--line); border-radius: 4px; }
+.slide::-webkit-scrollbar-thumb:hover { background: var(--gold-400); }
+.slide.active {
+  opacity: 1; visibility: visible;
+  transform: translateY(0) scale(1); z-index: 2;
+}
+.slide.prev { transform: translateY(-24px) scale(0.99); }
+
+.slide-eyebrow {
+  display: inline-flex; align-items: center; gap: 10px;
+  font-family: var(--font-head); font-weight: 600;
+  font-size: 13px; letter-spacing: .18em; text-transform: uppercase;
+  color: var(--green-600); margin-bottom: 14px;
+}
+.slide-eyebrow .icon { width: 18px; height: 18px; color: var(--gold-500); }
+
+.slide h1 {
+  font-family: var(--font-head); font-size: 44px;
+  font-weight: 700; line-height: 1.15;
+  margin: 0 0 8px; color: var(--green-900);
+}
+.slide h1 .accent { color: var(--gold-500); }
+
+.slide .subtitle {
+  font-size: 18px; color: var(--muted);
+  margin: 0 0 28px; max-width: 760px; line-height: 1.5;
+}
+.slide-body { flex: 1; display: flex; flex-direction: column; min-height: 0; }
+
+/* Reveal */
+.reveal {
+  opacity: 0; transform: translateY(18px);
+  transition: opacity .55s var(--ease), transform .55s var(--ease);
+}
+.slide.active .reveal { opacity: 1; transform: translateY(0); }
+.slide.active .reveal:nth-child(1)  { transition-delay: .05s; }
+.slide.active .reveal:nth-child(2)  { transition-delay: .12s; }
+.slide.active .reveal:nth-child(3)  { transition-delay: .19s; }
+.slide.active .reveal:nth-child(4)  { transition-delay: .26s; }
+.slide.active .reveal:nth-child(5)  { transition-delay: .33s; }
+.slide.active .reveal:nth-child(6)  { transition-delay: .40s; }
+.slide.active .reveal:nth-child(7)  { transition-delay: .47s; }
+.slide.active .reveal:nth-child(8)  { transition-delay: .54s; }
+.slide.active .reveal:nth-child(9)  { transition-delay: .61s; }
+.slide.active .reveal:nth-child(10) { transition-delay: .68s; }
+
+/* ── Topbar ── */
+.topbar {
+  position: fixed; top: 0; left: 0; right: 0;
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 22px 48px; z-index: 10; pointer-events: none;
+}
+.topbar .brand {
+  display: flex; align-items: center; gap: 12px;
+  font-family: var(--font-head); font-weight: 600;
+  font-size: 14px; color: var(--green-700); letter-spacing: .04em;
+}
+.topbar .brand svg.logo-svg { height: 38px; width: auto; }
+.topbar .slide-counter {
+  font-family: var(--font-mono); font-size: 13px;
+  color: var(--muted); background: var(--white);
+  border: 1px solid var(--line); border-radius: 999px;
+  padding: 6px 16px; box-shadow: var(--shadow-sm);
+}
+.topbar .slide-counter b { color: var(--green-700); }
+
+.progress-track {
+  position: fixed; top: 0; left: 0; right: 0;
+  height: 4px; background: var(--line); z-index: 11;
+}
+.progress-fill {
+  height: 100%; width: 0%;
+  background: linear-gradient(90deg, var(--green-600), var(--gold-500));
+  transition: width .5s var(--ease);
+}
+
+/* ── Bottom Nav ── */
+.navbar {
+  position: fixed; bottom: 28px; left: 0; right: 0;
+  display: flex; align-items: center; justify-content: center;
+  gap: 18px; z-index: 10;
+}
+.nav-btn {
+  display: flex; align-items: center; justify-content: center;
+  width: 46px; height: 46px; border-radius: 50%;
+  background: var(--white); border: 1px solid var(--line);
+  box-shadow: var(--shadow-sm); cursor: pointer;
+  color: var(--green-700);
+  transition: transform .2s var(--ease), box-shadow .2s var(--ease), background .2s var(--ease);
+}
+.nav-btn:hover { transform: translateY(-2px); box-shadow: var(--shadow-md); background: var(--green-100); }
+.nav-btn:active { transform: translateY(0); }
+.nav-btn.disabled { opacity: .35; pointer-events: none; }
+.nav-btn .icon { width: 20px; height: 20px; }
+.dots { display: flex; align-items: center; gap: 8px; padding: 0 8px; }
+.dot {
+  width: 9px; height: 9px; border-radius: 50%;
+  background: var(--line); cursor: pointer;
+  transition: all .25s var(--ease);
+}
+.dot:hover { background: var(--gold-400); }
+.dot.active { background: var(--green-600); width: 26px; border-radius: 6px; }
+
+/* ── Icons ── */
+.icon {
+  width: 24px; height: 24px; stroke: currentColor; fill: none;
+  stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; flex-shrink: 0;
+}
+
+/* ── Grids & Cards ── */
+.grid { display: grid; gap: 20px; }
+.grid-2 { grid-template-columns: 1fr 1fr; }
+.grid-3 { grid-template-columns: repeat(3,1fr); }
+.grid-4 { grid-template-columns: repeat(4,1fr); }
+
+.card {
+  background: var(--white); border: 1px solid var(--line);
+  border-radius: var(--radius); padding: 22px 24px;
+  box-shadow: var(--shadow-sm);
+  transition: transform .25s var(--ease), box-shadow .25s var(--ease), border-color .25s var(--ease);
+}
+.card:hover { transform: translateY(-4px); box-shadow: var(--shadow-md); border-color: var(--green-500); }
+.card .card-icon {
+  display: inline-flex; align-items: center; justify-content: center;
+  width: 44px; height: 44px; border-radius: 12px;
+  background: var(--green-100); color: var(--green-700); margin-bottom: 14px;
+}
+.card.gold .card-icon { background: var(--gold-100); color: var(--gold-600); }
+.card h3 {
+  font-family: var(--font-head); font-size: 17px; font-weight: 600;
+  margin: 0 0 8px; color: var(--green-900);
+}
+.card p { font-size: 14.5px; line-height: 1.55; color: var(--muted); margin: 0; }
+
+.pill {
+  display: inline-flex; align-items: center; gap: 6px;
+  font-size: 12.5px; font-weight: 600; padding: 5px 12px;
+  border-radius: 999px; background: var(--green-100); color: var(--green-700);
+}
+.pill.gold { background: var(--gold-100); color: var(--gold-600); }
+
+/* ── Code ── */
+.code {
+  font-family: var(--font-mono); font-size: 13.5px; line-height: 1.7;
+  background: var(--green-900); color: #d6f3e3;
+  border-radius: var(--radius-sm); padding: 18px 22px;
+  box-shadow: var(--shadow-md); overflow: auto;
+}
+.code .c-key  { color: var(--gold-400); }
+.code .c-str  { color: #9be3ff; }
+.code .c-num  { color: #ffb86c; }
+.code .c-com  { color: #7fae93; font-style: italic; }
+.code .c-fn   { color: #c5f0a4; }
+
+/* ── Stats ── */
+.stat { text-align: center; padding: 20px; }
+.stat .stat-value {
+  font-family: var(--font-head); font-size: 42px; font-weight: 700;
+  color: var(--green-700); line-height: 1;
+}
+.stat .stat-value .unit { font-size: 20px; font-weight: 600; color: var(--gold-600); }
+.stat .stat-label {
+  margin-top: 8px; font-size: 13px; text-transform: uppercase;
+  letter-spacing: .08em; color: var(--muted); font-weight: 600;
+}
+
+/* ── Pipeline ── */
+.pipeline {
+  display: flex; align-items: stretch; gap: 0; flex-wrap: wrap;
+}
+.pipe-step {
+  flex: 1; min-width: 130px;
+  background: var(--white); border: 1px solid var(--line);
+  border-radius: var(--radius); padding: 18px; text-align: center;
+  box-shadow: var(--shadow-sm);
+  transition: transform .25s var(--ease), box-shadow .25s var(--ease);
+}
+.pipe-step:hover { transform: translateY(-4px); box-shadow: var(--shadow-md); }
+.pipe-step .card-icon { margin: 0 auto 12px; }
+.pipe-step h4 {
+  font-family: var(--font-head); font-size: 14px; margin: 0 0 6px; color: var(--green-900);
+}
+.pipe-step p { font-size: 12px; color: var(--muted); margin: 0; line-height: 1.5; }
+.pipe-arrow {
+  display: flex; align-items: center; justify-content: center;
+  color: var(--gold-500); padding: 0 6px;
+}
+.pipe-arrow .icon { width: 22px; height: 22px; }
+
+/* ── Two-col ── */
+.cols { display: flex; gap: 32px; flex: 1; min-height: 0; }
+.col  { flex: 1; display: flex; flex-direction: column; min-width: 0; }
+
+/* ── Steps ── */
+.step {
+  display: flex; gap: 16px; align-items: flex-start;
+  background: var(--white); border: 1px solid var(--line);
+  border-radius: var(--radius-sm); padding: 14px 18px;
+  box-shadow: var(--shadow-sm);
+}
+.step .step-num {
+  flex-shrink: 0; width: 32px; height: 32px; border-radius: 50%;
+  background: var(--green-700); color: var(--white);
+  display: flex; align-items: center; justify-content: center;
+  font-family: var(--font-head); font-weight: 700; font-size: 14px;
+}
+.step .step-text { font-size: 14.5px; line-height: 1.55; color: var(--ink); }
+.step .step-text b { color: var(--green-700); }
+
+/* ── Note bar ── */
+.note-bar {
+  margin-top: auto; display: flex; align-items: center; gap: 12px;
+  background: var(--gold-100); border: 1px solid var(--gold-400);
+  border-radius: var(--radius-sm); padding: 14px 20px;
+  font-size: 14px; color: #5c4400;
+}
+.note-bar .icon { color: var(--gold-600); width: 22px; height: 22px; }
+
+/* ── Table ── */
+table.results { width: 100%; border-collapse: collapse; font-size: 15px; }
+table.results th, table.results td {
+  padding: 12px 16px; text-align: left; border-bottom: 1px solid var(--line);
+}
+table.results th {
+  font-family: var(--font-head); font-weight: 600;
+  color: var(--green-700); background: var(--green-100);
+}
+table.results td.num { font-family: var(--font-mono); font-weight: 700; color: var(--gold-600); }
+table.results tr:last-child td { border-bottom: none; }
+table.results tr.highlight td { background: var(--green-100); font-weight: 600; }
+
+/* ── Title slide ── */
+.slide-title {
+  align-items: center; justify-content: center; text-align: center;
+}
+.slide-title .logo-badge {
+  width: 120px; height: 120px; margin: 0 auto 24px;
+  display: flex; align-items: center; justify-content: center;
+}
+.slide-title h1 { font-size: 50px; }
+.slide-title .subtitle { margin: 0 auto 28px; text-align: center; }
+.slide-title .meta {
+  display: flex; gap: 28px; justify-content: center; flex-wrap: wrap; margin-top: 12px;
+}
+.slide-title .meta-item {
+  display: flex; align-items: center; gap: 8px; font-size: 14px; color: var(--muted);
+}
+.slide-title .meta-item .icon { width: 18px; height: 18px; color: var(--green-600); }
+
+/* ── Authors block ── */
+.authors-block {
+  display: flex; gap: 20px; justify-content: center; flex-wrap: wrap; margin: 24px 0 0;
+}
+.author-card {
+  background: var(--white); border: 1px solid var(--line);
+  border-radius: var(--radius-sm); padding: 16px 24px;
+  text-align: center; box-shadow: var(--shadow-sm); min-width: 220px;
+}
+.author-card .author-name { font-family: var(--font-head); font-weight: 600; color: var(--green-900); font-size: 15px; }
+.author-card .author-id { font-family: var(--font-mono); color: var(--gold-600); font-size: 13px; margin-top: 4px; }
+
+/* ── Section divider ── */
+.slide-section { align-items: flex-start; justify-content: center; }
+.slide-section .section-num {
+  font-family: var(--font-head); font-size: 120px; font-weight: 700;
+  color: var(--green-100); line-height: 1;
+  position: absolute; top: 60px; right: 96px;
+}
+
+/* ── Formula ── */
+.formula-box {
+  background: var(--green-900); color: #d6f3e3;
+  border-radius: var(--radius-sm); padding: 20px 28px;
+  font-family: var(--font-mono); font-size: 15px; line-height: 2.2;
+  box-shadow: var(--shadow-md);
+}
+.formula-box .f-var { color: var(--gold-400); font-style: italic; }
+.formula-box .f-op  { color: #9be3ff; }
+.formula-box .f-com { color: #7fae93; font-style: italic; font-size: 13px; }
+
+/* ── BEV diagram ── */
+.bev-container {
+  display: flex; gap: 12px; align-items: stretch;
+}
+.bev-box {
+  flex: 1; border-radius: var(--radius-sm); overflow: hidden;
+  background: var(--green-900); box-shadow: var(--shadow-md);
+  display: flex; flex-direction: column; align-items: center; justify-content: center;
+  padding: 16px; text-align: center; min-height: 160px;
+}
+.bev-box svg { width: 100%; max-width: 160px; height: auto; }
+.bev-box p { font-size: 12.5px; color: #7fae93; margin-top: 10px; font-family: var(--font-mono); }
+
+/* ── Responsive ── */
+@media (max-height: 760px) {
+  .slide { padding: 40px 72px 84px; }
+  .slide h1 { font-size: 36px; }
+  .slide .subtitle { font-size: 16px; margin-bottom: 18px; }
+}
+@media (max-width: 900px) {
+  .slide { padding: 48px 32px 84px; }
+  .grid-4 { grid-template-columns: repeat(2,1fr); }
+  .grid-3 { grid-template-columns: repeat(2,1fr); }
+  .cols { flex-direction: column; }
+}
+</style>
+</head>
+<body>
+
+<!-- ============ SVG ICON SPRITE ============ -->
+<svg style="display:none" aria-hidden="true">
+  <symbol id="i-camera"   viewBox="0 0 24 24"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></symbol>
+  <symbol id="i-eye"      viewBox="0 0 24 24"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></symbol>
+  <symbol id="i-car"      viewBox="0 0 24 24"><path d="M5 17H3a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v9a2 2 0 0 1-2 2h-2"/><circle cx="7" cy="17" r="2"/><circle cx="17" cy="17" r="2"/><path d="M13 17H9"/></symbol>
+  <symbol id="i-speed"    viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/><path d="M4.22 4.22l.01-.01M19.78 4.22l-.01-.01M4.93 12H4M20 12h-.93"/></symbol>
+  <symbol id="i-layers"   viewBox="0 0 24 24"><polygon points="12 2 2 7 12 12 22 7 12 2"/><polyline points="2 17 12 22 22 17"/><polyline points="2 12 12 17 22 12"/></symbol>
+  <symbol id="i-cpu"      viewBox="0 0 24 24"><rect x="4" y="4" width="16" height="16" rx="2" ry="2"/><rect x="9" y="9" width="6" height="6"/><line x1="9" y1="1" x2="9" y2="4"/><line x1="15" y1="1" x2="15" y2="4"/><line x1="9" y1="20" x2="9" y2="23"/><line x1="15" y1="20" x2="15" y2="23"/><line x1="20" y1="9" x2="23" y2="9"/><line x1="20" y1="14" x2="23" y2="14"/><line x1="1" y1="9" x2="4" y2="9"/><line x1="1" y1="14" x2="4" y2="14"/></symbol>
+  <symbol id="i-target"   viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2"/></symbol>
+  <symbol id="i-zap"      viewBox="0 0 24 24"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></symbol>
+  <symbol id="i-chart"    viewBox="0 0 24 24"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></symbol>
+  <symbol id="i-check"    viewBox="0 0 24 24"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></symbol>
+  <symbol id="i-alert"    viewBox="0 0 24 24"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></symbol>
+  <symbol id="i-list"     viewBox="0 0 24 24"><line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/><line x1="3" y1="6" x2="3.01" y2="6"/><line x1="3" y1="12" x2="3.01" y2="12"/><line x1="3" y1="18" x2="3.01" y2="18"/></symbol>
+  <symbol id="i-arrow-right" viewBox="0 0 24 24"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></symbol>
+  <symbol id="i-arrow-left"  viewBox="0 0 24 24"><line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/></symbol>
+  <symbol id="i-git"      viewBox="0 0 24 24"><line x1="6" y1="3" x2="6" y2="15"/><circle cx="18" cy="6" r="3"/><circle cx="6" cy="18" r="3"/><path d="M18 9a9 9 0 0 1-9 9"/></symbol>
+  <symbol id="i-flag"     viewBox="0 0 24 24"><path d="M4 15s1-1 4-1 5 2 8 2 4-1 4-1V3s-1 1-4 1-5-2-8-2-4 1-4 1z"/><line x1="4" y1="22" x2="4" y2="15"/></symbol>
+  <symbol id="i-map"      viewBox="0 0 24 24"><polygon points="1 6 1 22 8 18 16 22 23 18 23 2 16 6 8 2 1 6"/><line x1="8" y1="2" x2="8" y2="18"/><line x1="16" y1="6" x2="16" y2="22"/></symbol>
+  <symbol id="i-grid"     viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></symbol>
+  <symbol id="i-filter"   viewBox="0 0 24 24"><polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3"/></symbol>
+  <symbol id="i-shuffle"  viewBox="0 0 24 24"><polyline points="16 3 21 3 21 8"/><line x1="4" y1="20" x2="21" y2="3"/><polyline points="21 16 21 21 16 21"/><line x1="15" y1="15" x2="21" y2="21"/><line x1="4" y1="4" x2="9" y2="9"/></symbol>
+  <symbol id="i-database" viewBox="0 0 24 24"><ellipse cx="12" cy="5" rx="9" ry="3"/><path d="M21 12c0 1.66-4 3-9 3s-9-1.34-9-3"/><path d="M3 5v14c0 1.66 4 3 9 3s9-1.34 9-3V5"/></symbol>
+  <symbol id="i-award"    viewBox="0 0 24 24"><circle cx="12" cy="8" r="7"/><polyline points="8.21 13.89 7 23 12 20 17 23 15.79 13.88"/></symbol>
+  <symbol id="i-trend"    viewBox="0 0 24 24"><polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/><polyline points="17 6 23 6 23 12"/></symbol>
+  <symbol id="i-clock"    viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></symbol>
+  <symbol id="i-compass"  viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><polygon points="16.24 7.76 14.12 14.12 7.76 16.24 9.88 9.88 16.24 7.76"/></symbol>
+  <symbol id="i-shield"   viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></symbol>
+  <symbol id="i-sliders"  viewBox="0 0 24 24"><line x1="4" y1="21" x2="4" y2="14"/><line x1="4" y1="10" x2="4" y2="3"/><line x1="12" y1="21" x2="12" y2="12"/><line x1="12" y1="8" x2="12" y2="3"/><line x1="20" y1="21" x2="20" y2="16"/><line x1="20" y1="12" x2="20" y2="3"/><line x1="1" y1="14" x2="7" y2="14"/><line x1="9" y1="8" x2="15" y2="8"/><line x1="17" y1="16" x2="23" y2="16"/></symbol>
+  <symbol id="i-search"   viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></symbol>
+</svg>
+
+<!-- UN-FST Logo SVG (inline) -->
+<svg id="logo-svg-def" style="display:none" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
+  <circle cx="60" cy="57" r="52" fill="#3A8E5B"/>
+  <!-- Olive branch left -->
+  <g stroke="#fff" stroke-width="1.5" fill="none" opacity="0.85">
+    <path d="M28 70 Q22 58 26 46"/>
+    <path d="M26 46 Q20 44 18 52"/><path d="M25 53 Q19 51 18 59"/><path d="M26 60 Q20 58 19 66"/>
+    <path d="M28 68 Q22 67 22 74"/>
+  </g>
+  <!-- Olive branch right -->
+  <g stroke="#fff" stroke-width="1.5" fill="none" opacity="0.85">
+    <path d="M92 70 Q98 58 94 46"/>
+    <path d="M94 46 Q100 44 102 52"/><path d="M95 53 Q101 51 102 59"/><path d="M94 60 Q100 58 101 66"/>
+    <path d="M92 68 Q98 67 98 74"/>
+  </g>
+  <!-- Pen/quill center -->
+  <g fill="none" stroke="#fff" stroke-width="1.8">
+    <path d="M60 26 L55 48 L60 52 L65 48 Z"/>
+    <path d="M60 52 L58 62 L60 66 L62 62 Z"/>
+    <line x1="60" y1="66" x2="60" y2="74"/>
+    <path d="M56 74 Q60 78 64 74"/>
+  </g>
+  <!-- Small leaves -->
+  <ellipse cx="52" cy="36" rx="6" ry="3" fill="#7fc97f" transform="rotate(-30 52 36)"/>
+  <ellipse cx="68" cy="36" rx="6" ry="3" fill="#7fc97f" transform="rotate(30 68 36)"/>
+  <!-- Arabic text approximation (decorative arc) -->
+  <text x="60" y="85" text-anchor="middle" fill="#fff" font-size="8" font-family="Arial,sans-serif" opacity="0.9">جامعة نواكشوط</text>
+  <!-- Gold bottom bar -->
+  <rect x="22" y="95" width="76" height="20" rx="10" fill="#E8B608"/>
+  <text x="60" y="110" text-anchor="middle" fill="#fff" font-size="11" font-weight="bold" font-family="Arial,sans-serif">U.N</text>
+</svg>
+
+<div class="bg-decor"></div>
+<div class="progress-track"><div class="progress-fill" id="progressFill"></div></div>
+
+<header class="topbar">
+  <div class="brand">
+    <svg class="logo-svg" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
+      <circle cx="60" cy="57" r="52" fill="#3A8E5B"/>
+      <g stroke="#fff" stroke-width="1.5" fill="none" opacity="0.85">
+        <path d="M28 70 Q22 58 26 46"/>
+        <path d="M26 46 Q20 44 18 52"/><path d="M25 53 Q19 51 18 59"/><path d="M26 60 Q20 58 19 66"/><path d="M28 68 Q22 67 22 74"/>
+      </g>
+      <g stroke="#fff" stroke-width="1.5" fill="none" opacity="0.85">
+        <path d="M92 70 Q98 58 94 46"/>
+        <path d="M94 46 Q100 44 102 52"/><path d="M95 53 Q101 51 102 59"/><path d="M94 60 Q100 58 101 66"/><path d="M92 68 Q98 67 98 74"/>
+      </g>
+      <g fill="none" stroke="#fff" stroke-width="1.8">
+        <path d="M60 26 L55 48 L60 52 L65 48 Z"/><path d="M60 52 L58 62 L60 66 L62 62 Z"/>
+        <line x1="60" y1="66" x2="60" y2="74"/><path d="M56 74 Q60 78 64 74"/>
+      </g>
+      <ellipse cx="52" cy="36" rx="6" ry="3" fill="#7fc97f" transform="rotate(-30 52 36)"/>
+      <ellipse cx="68" cy="36" rx="6" ry="3" fill="#7fc97f" transform="rotate(30 68 36)"/>
+      <text x="60" y="85" text-anchor="middle" fill="#fff" font-size="8" font-family="Arial,sans-serif" opacity="0.9">جامعة نواكشوط</text>
+      <rect x="22" y="95" width="76" height="20" rx="10" fill="#E8B608"/>
+      <text x="60" y="110" text-anchor="middle" fill="#fff" font-size="11" font-weight="bold" font-family="Arial,sans-serif">U.N</text>
+    </svg>
+    <span>Vision par Ordinateur &mdash; M1 IA</span>
+  </div>
+  <div class="slide-counter"><b id="slideNum">01</b> / <span id="slideTotal">16</span></div>
+</header>
+
+<main class="deck" id="deck">
+
+<!-- ===================== SLIDE 1 — COVER ===================== -->
+<section class="slide slide-title">
+  <div class="slide-body" style="justify-content:center;">
+    <div class="reveal logo-badge">
+      <svg viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg" style="width:120px;height:120px;">
+        <circle cx="60" cy="57" r="52" fill="#3A8E5B"/>
+        <g stroke="#fff" stroke-width="1.5" fill="none" opacity="0.85">
+          <path d="M28 70 Q22 58 26 46"/><path d="M26 46 Q20 44 18 52"/><path d="M25 53 Q19 51 18 59"/><path d="M26 60 Q20 58 19 66"/><path d="M28 68 Q22 67 22 74"/>
+        </g>
+        <g stroke="#fff" stroke-width="1.5" fill="none" opacity="0.85">
+          <path d="M92 70 Q98 58 94 46"/><path d="M94 46 Q100 44 102 52"/><path d="M95 53 Q101 51 102 59"/><path d="M94 60 Q100 58 101 66"/><path d="M92 68 Q98 67 98 74"/>
+        </g>
+        <g fill="none" stroke="#fff" stroke-width="1.8">
+          <path d="M60 26 L55 48 L60 52 L65 48 Z"/><path d="M60 52 L58 62 L60 66 L62 62 Z"/>
+          <line x1="60" y1="66" x2="60" y2="74"/><path d="M56 74 Q60 78 64 74"/>
+        </g>
+        <ellipse cx="52" cy="36" rx="6" ry="3" fill="#7fc97f" transform="rotate(-30 52 36)"/>
+        <ellipse cx="68" cy="36" rx="6" ry="3" fill="#7fc97f" transform="rotate(30 68 36)"/>
+        <text x="60" y="85" text-anchor="middle" fill="#fff" font-size="8" font-family="Arial,sans-serif" opacity="0.9">جامعة نواكشوط</text>
+        <rect x="22" y="95" width="76" height="20" rx="10" fill="#E8B608"/>
+        <text x="60" y="110" text-anchor="middle" fill="#fff" font-size="11" font-weight="bold" font-family="Arial,sans-serif">U.N</text>
+      </svg>
+    </div>
+    <div class="reveal slide-eyebrow" style="justify-content:center;">
+      <svg class="icon"><use href="#i-camera"/></svg>
+      Projet Computer Vision &mdash; Module NLP&amp;CV M1 IA
+    </div>
+    <h1 class="reveal">Estimation de la <span class="accent">Vitesse</span><br>des Véhicules</h1>
+    <p class="reveal subtitle">
+      Approche monoculaire combinant <strong>YOLOv11m</strong> pour la détection,
+      <strong>DeepSORT</strong> pour le suivi multi-objet et la <strong>Transformation par Homographie</strong>
+      pour la calibration géométrique &mdash; évaluée sur BrnoCompSpeed.
+    </p>
+    <div class="reveal authors-block">
+      <div class="author-card">
+        <div class="author-name">Mohamed Salem Ebnou Echvagha Oubeid</div>
+        <div class="author-id">Matricule : C34613</div>
+      </div>
+      <div class="author-card">
+        <div class="author-name">Mariem Mohamed El Bechir</div>
+        <div class="author-id">Matricule : C34606</div>
+      </div>
+    </div>
+    <div class="reveal meta" style="margin-top:24px;">
+      <div class="meta-item"><svg class="icon"><use href="#i-award"/></svg> Université de Nouakchott — FST</div>
+      <div class="meta-item"><svg class="icon"><use href="#i-zap"/></svg> YOLOv11m &middot; DeepSORT &middot; Homographie</div>
+      <div class="meta-item"><svg class="icon"><use href="#i-clock"/></svg> 18 Juin 2026</div>
+    </div>
+  </div>
+</section>
+
+<!-- ===================== SLIDE 2 — PLAN ===================== -->
+<section class="slide">
+  <div class="slide-eyebrow reveal"><svg class="icon"><use href="#i-list"/></svg> Sommaire</div>
+  <h1 class="reveal">Plan de la présentation</h1>
+  <p class="subtitle reveal">Huit étapes pour comprendre comment une simple caméra de surveillance permet d'estimer la vitesse de chaque véhicule en temps réel.</p>
+  <div class="slide-body">
+    <div class="grid grid-2" style="gap:14px;">
+      <div class="step reveal"><div class="step-num">1</div><div class="step-text"><b>Introduction &amp; Motivation</b><br>Pourquoi estimer la vitesse ? Sécurité routière, surveillance intelligente.</div></div>
+      <div class="step reveal"><div class="step-num">2</div><div class="step-text"><b>Dataset : BrnoCompSpeed</b><br>6 séquences vidéo, 20 800 véhicules annotés, vérité terrain GPS.</div></div>
+      <div class="step reveal"><div class="step-num">3</div><div class="step-text"><b>Stack technique</b><br>YOLOv11m, DeepSORT, OpenCV, PyTorch, Ultralytics, Supervision.</div></div>
+      <div class="step reveal"><div class="step-num">4</div><div class="step-text"><b>Architecture globale</b><br>Vue d'ensemble du pipeline détection → suivi → calibration → vitesse.</div></div>
+      <div class="step reveal"><div class="step-num">5</div><div class="step-text"><b>YOLOv11 : Détection</b><br>Architecture C3k2, SPPF, tête de détection découplée.</div></div>
+      <div class="step reveal"><div class="step-num">6</div><div class="step-text"><b>DeepSORT : Suivi multi-objet</b><br>Filtre de Kalman + Deep ReID + algorithme Hongrois.</div></div>
+      <div class="step reveal"><div class="step-num">7</div><div class="step-text"><b>Homographie &amp; Calibration</b><br>Transformation perspective → vue aérienne (BEV) → coordonnées réelles.</div></div>
+      <div class="step reveal"><div class="step-num">8</div><div class="step-text"><b>Résultats &amp; Conclusion</b><br>MAE, MAPE, FPS &mdash; performances et perspectives.</div></div>
+    </div>
+  </div>
+</section>
+
+<!-- ===================== SLIDE 3 — INTRODUCTION ===================== -->
+<section class="slide">
+  <div class="slide-eyebrow reveal"><svg class="icon"><use href="#i-eye"/></svg> Introduction</div>
+  <h1 class="reveal">Motivation &amp; contexte</h1>
+  <p class="subtitle reveal">La vitesse excessive est la première cause d'accidents mortels. Des systèmes de mesure automatique, bon marché et non-invasifs sont cruciaux.</p>
+  <div class="slide-body cols">
+    <div class="col" style="gap:14px;display:flex;flex-direction:column;">
+      <div class="card reveal">
+        <div class="card-icon"><svg class="icon"><use href="#i-shield"/></svg></div>
+        <h3>Sécurité routière</h3>
+        <p>Plus de <strong>1,35 million</strong> de décès sur les routes par an (OMS). La vitesse est impliquée dans <strong>30&ndash;50 %</strong> des accidents graves. Une estimation automatique de la vitesse permet une surveillance continue sans opérateur humain.</p>
+      </div>
+      <div class="card reveal">
+        <div class="card-icon"><svg class="icon"><use href="#i-camera"/></svg></div>
+        <h3>Infrastructure existante</h3>
+        <p>Des millions de caméras de surveillance sont déjà déployées sur les routes. Notre approche <strong>monoculaire</strong> exploite ces flux vidéo existants sans nécessiter de capteurs supplémentaires (radar, LiDAR).</p>
+      </div>
+      <div class="card reveal">
+        <div class="card-icon"><svg class="icon"><use href="#i-map"/></svg></div>
+        <h3>Applicabilité en Mauritanie</h3>
+        <p>Dans des pays à ressources limitées comme la Mauritanie, l'installation de radars est coûteuse. Une solution basée sur des caméras IP low-cost et du traitement GPU économique est idéale pour les axes routiers à risque.</p>
+      </div>
+    </div>
+    <div class="col" style="gap:14px;display:flex;flex-direction:column;">
+      <div class="grid grid-2">
+        <div class="stat card reveal">
+          <div class="stat-value">1.35<span class="unit">M</span></div>
+          <div class="stat-label">Décès/an OMS</div>
+        </div>
+        <div class="stat card reveal">
+          <div class="stat-value">30<span class="unit">%</span></div>
+          <div class="stat-label">Accidents liés à la vitesse</div>
+        </div>
+        <div class="stat card reveal">
+          <div class="stat-value">~<span class="unit">0</span></div>
+          <div class="stat-label">Capteur supplémentaire requis</div>
+        </div>
+        <div class="stat card gold reveal">
+          <div class="stat-value">1</div>
+          <div class="stat-label">Caméra monoculaire suffit</div>
+        </div>
+      </div>
+      <div class="note-bar reveal" style="margin-top:0;">
+        <svg class="icon"><use href="#i-alert"/></svg>
+        <div><b>Défi clé :</b> Estimer une distance en mètres à partir de pixels 2D implique de résoudre l'ambiguïté de profondeur — c'est là qu'intervient la <b>calibration par homographie</b>.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===================== SLIDE 4 — DATASET ===================== -->
+<section class="slide">
+  <div class="slide-eyebrow reveal"><svg class="icon"><use href="#i-database"/></svg> Dataset</div>
+  <h1 class="reveal">BrnoCompSpeed</h1>
+  <p class="subtitle reveal">Jeu de données de référence pour l'estimation de vitesse monoculaire, produit par l'Université Technologique de Brno (République Tchèque).</p>
+  <div class="slide-body cols">
+    <div class="col" style="gap:14px;display:flex;flex-direction:column;">
+      <div class="card reveal">
+        <div class="card-icon"><svg class="icon"><use href="#i-camera"/></svg></div>
+        <h3>Acquisition</h3>
+        <p>3 emplacements de caméras fixes sur des axes routiers urbains et périurbains. Chaque emplacement est filmé sous <strong>2 angles différents</strong> pour un total de <strong>6 séquences vidéo</strong>. Résolution : 1920×1080 @ 50fps.</p>
+      </div>
+      <div class="card reveal">
+        <div class="card-icon"><svg class="icon"><use href="#i-speed"/></svg></div>
+        <h3>Vérité terrain GPS</h3>
+        <p>Des véhicules équipés de <strong>traceurs GPS précis</strong> (erreur &lt; 0.5 km/h) ont circulé pendant les enregistrements. La vitesse de référence est calculée à partir des trajectoires GPS échantillonnées à 10 Hz.</p>
+      </div>
+      <div class="card reveal">
+        <div class="card-icon"><svg class="icon"><use href="#i-layers"/></svg></div>
+        <h3>Annotations</h3>
+        <p>Boîtes englobantes manuelles + ID de véhicule + vitesse GPS associée pour chaque passage. Plage de vitesses : <strong>5&ndash;130 km/h</strong>. Catégories : voitures, camionnettes, camions, motos.</p>
+      </div>
+    </div>
+    <div class="col" style="gap:14px;display:flex;flex-direction:column;">
+      <div class="grid grid-2">
+        <div class="stat card reveal">
+          <div class="stat-value">6</div>
+          <div class="stat-label">Séquences vidéo</div>
+        </div>
+        <div class="stat card reveal">
+          <div class="stat-value">3</div>
+          <div class="stat-label">Emplacements caméra</div>
+        </div>
+        <div class="stat card gold reveal">
+          <div class="stat-value">20<span class="unit">k+</span></div>
+          <div class="stat-label">Véhicules annotés</div>
+        </div>
+        <div class="stat card reveal">
+          <div class="stat-value">50<span class="unit">fps</span></div>
+          <div class="stat-label">Fréquence d'acquisition</div>
+        </div>
+      </div>
+      <div class="card reveal">
+        <div class="card-icon"><svg class="icon"><use href="#i-compass"/></svg></div>
+        <h3>Calibration fournie</h3>
+        <p>Pour chaque séquence, le dataset fournit les <strong>paramètres intrinsèques</strong> de la caméra et des <strong>points de référence homographiques</strong> (marquages routiers connus), ce qui permet de valider notre méthode de calibration.</p>
+      </div>
+      <div class="note-bar reveal" style="margin-top:0;">
+        <svg class="icon"><use href="#i-alert"/></svg>
+        <div>Nous avons utilisé les séquences <b>session0</b> à <b>session4</b> pour l'entraînement/validation et <b>session5</b> comme set de test final.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===================== SLIDE 5 — TECH STACK ===================== -->
+<section class="slide">
+  <div class="slide-eyebrow reveal"><svg class="icon"><use href="#i-cpu"/></svg> Stack technique</div>
+  <h1 class="reveal">Outils &amp; bibliothèques</h1>
+  <p class="subtitle reveal">Un écosystème Python moderne — performant sur GPU Colab, reproductible via <code>requirements.txt</code>.</p>
+  <div class="slide-body">
+    <div class="grid grid-4">
+      <div class="card reveal">
+        <div class="card-icon"><svg class="icon"><use href="#i-target"/></svg></div>
+        <h3>Ultralytics YOLOv11</h3>
+        <p><code>ultralytics</code> — modèle <code>yolo11m.pt</code> pré-entraîné sur COCO (80 classes). Fine-tuné sur BrnoCompSpeed pour la détection de véhicules. Inférence : ~35 FPS sur GPU T4.</p>
+      </div>
+      <div class="card gold reveal">
+        <div class="card-icon"><svg class="icon"><use href="#i-shuffle"/></svg></div>
+        <h3>DeepSORT</h3>
+        <p><code>deep_sort_realtime</code> — suivi multi-objet en temps réel. Combine filtre de Kalman (prédiction) + réseau ReID (apparence) + algorithme Hongrois (assignation). IDs persistants entre frames.</p>
+      </div>
+      <div class="card reveal">
+        <div class="card-icon"><svg class="icon"><use href="#i-compass"/></svg></div>
+        <h3>OpenCV</h3>
+        <p><code>cv2</code> — calcul de la matrice d'homographie (<code>findHomography</code>), transformation de perspective (<code>perspectiveTransform</code>), lecture des flux vidéo, dessin des annotations.</p>
+      </div>
+      <div class="card reveal">
+        <div class="card-icon"><svg class="icon"><use href="#i-cpu"/></svg></div>
+        <h3>PyTorch</h3>
+        <p><code>torch + torchvision</code> — backend GPU pour YOLOv11 et le réseau ReID de DeepSORT. CUDA 11.8 sur Colab T4 (16 GB VRAM).</p>
+      </div>
+      <div class="card reveal">
+        <div class="card-icon"><svg class="icon"><use href="#i-eye"/></svg></div>
+        <h3>Supervision</h3>
+        <p><code>supervision</code> (Roboflow) — annotations visuelles enrichies : boîtes annotées avec ID et vitesse, traces de trajectoires, zones de détection polygonales.</p>
+      </div>
+      <div class="card reveal">
+        <div class="card-icon"><svg class="icon"><use href="#i-chart"/></svg></div>
+        <h3>NumPy / Pandas / Matplotlib</h3>
+        <p>Calculs matriciels (homographie, distances), agrégation des résultats par véhicule, visualisation des courbes d'erreur MAE/MAPE et histogrammes de distribution des vitesses.</p>
+      </div>
+      <div class="card reveal">
+        <div class="card-icon"><svg class="icon"><use href="#i-database"/></svg></div>
+        <h3>Google Colab + Drive</h3>
+        <p>Environnement GPU gratuit (T4) pour l'inférence et l'évaluation. Les vidéos et checkpoints sont stockés sur Google Drive (<code>/content/drive/MyDrive/</code>).</p>
+      </div>
+      <div class="card reveal">
+        <div class="card-icon"><svg class="icon"><use href="#i-git"/></svg></div>
+        <h3>Gestion du projet</h3>
+        <p><code>tqdm</code> barres de progression, <code>json/csv</code> pour la persistance des résultats, <code>argparse</code> pour les scripts CLI, <code>ffmpeg</code> pour l'export des vidéos annotées.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===================== SLIDE 6 — ARCHITECTURE ===================== -->
+<section class="slide">
+  <div class="slide-eyebrow reveal"><svg class="icon"><use href="#i-layers"/></svg> Architecture globale</div>
+  <h1 class="reveal">Vue d'ensemble du pipeline</h1>
+  <p class="subtitle reveal">Deux phases bien distinctes : une phase de calibration (une seule fois par caméra) et une phase d'inférence en ligne (à chaque frame).</p>
+  <div class="slide-body" style="gap:24px;">
+
+    <div class="reveal">
+      <div class="pill"><svg class="icon" style="width:14px;height:14px"><use href="#i-compass"/></svg> Phase de calibration (hors-ligne)</div>
+      <div class="pipeline" style="margin-top:14px;">
+        <div class="pipe-step">
+          <div class="card-icon"><svg class="icon"><use href="#i-camera"/></svg></div>
+          <h4>Frame de référence</h4><p>Image statique de la route</p>
+        </div>
+        <div class="pipe-arrow"><svg class="icon"><use href="#i-arrow-right"/></svg></div>
+        <div class="pipe-step">
+          <div class="card-icon"><svg class="icon"><use href="#i-map"/></svg></div>
+          <h4>Points source</h4><p>4+ points pixels (marquages)</p>
+        </div>
+        <div class="pipe-arrow"><svg class="icon"><use href="#i-arrow-right"/></svg></div>
+        <div class="pipe-step">
+          <div class="card-icon"><svg class="icon"><use href="#i-compass"/></svg></div>
+          <h4>Points destination</h4><p>Coords réelles (m)</p>
+        </div>
+        <div class="pipe-arrow"><svg class="icon"><use href="#i-arrow-right"/></svg></div>
+        <div class="pipe-step">
+          <div class="card-icon" style="background:var(--gold-100);color:var(--gold-600)"><svg class="icon"><use href="#i-grid"/></svg></div>
+          <h4>Matrice H (3×3)</h4><p>Homographie persistante</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="reveal">
+      <div class="pill gold"><svg class="icon" style="width:14px;height:14px"><use href="#i-car"/></svg> Phase d'inférence (par frame)</div>
+      <div class="pipeline" style="margin-top:14px;">
+        <div class="pipe-step">
+          <div class="card-icon" style="background:var(--gold-100);color:var(--gold-600)"><svg class="icon"><use href="#i-camera"/></svg></div>
+          <h4>Frame vidéo</h4><p>1920×1080 @ 50 fps</p>
+        </div>
+        <div class="pipe-arrow"><svg class="icon"><use href="#i-arrow-right"/></svg></div>
+        <div class="pipe-step">
+          <div class="card-icon" style="background:var(--gold-100);color:var(--gold-600)"><svg class="icon"><use href="#i-target"/></svg></div>
+          <h4>YOLOv11m</h4><p>Boîtes + classes véhicules</p>
+        </div>
+        <div class="pipe-arrow"><svg class="icon"><use href="#i-arrow-right"/></svg></div>
+        <div class="pipe-step">
+          <div class="card-icon" style="background:var(--gold-100);color:var(--gold-600)"><svg class="icon"><use href="#i-shuffle"/></svg></div>
+          <h4>DeepSORT</h4><p>ID persistant par véhicule</p>
+        </div>
+        <div class="pipe-arrow"><svg class="icon"><use href="#i-arrow-right"/></svg></div>
+        <div class="pipe-step">
+          <div class="card-icon" style="background:var(--gold-100);color:var(--gold-600)"><svg class="icon"><use href="#i-compass"/></svg></div>
+          <h4>Homographie H</h4><p>Pixel → mètres réels</p>
+        </div>
+        <div class="pipe-arrow"><svg class="icon"><use href="#i-arrow-right"/></svg></div>
+        <div class="pipe-step">
+          <div class="card-icon" style="background:var(--gold-100);color:var(--gold-600)"><svg class="icon"><use href="#i-speed"/></svg></div>
+          <h4>Vitesse (km/h)</h4><p>v = Δd/Δt × 3.6</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="note-bar reveal">
+      <svg class="icon"><use href="#i-alert"/></svg>
+      <div><b>Point clé :</b> La matrice d'homographie est calculée <i>une seule fois</i> et réutilisée pour toutes les frames — la précision de la calibration est donc critique pour la qualité des estimations de vitesse.</div>
+    </div>
+  </div>
+</section>
+
+<!-- ===================== SLIDE 7 — YOLOV11 ===================== -->
+<section class="slide">
+  <div class="slide-eyebrow reveal"><svg class="icon"><use href="#i-target"/></svg> Étape 1 — Détection</div>
+  <h1 class="reveal">YOLOv11 : Détection d'objets</h1>
+  <p class="subtitle reveal">Réseau one-stage à architecture améliorée — détecte les véhicules en une seule passe, en temps réel.</p>
+  <div class="slide-body cols">
+    <div class="col" style="gap:14px;display:flex;flex-direction:column;">
+      <div class="card reveal">
+        <div class="card-icon"><svg class="icon"><use href="#i-layers"/></svg></div>
+        <h3>Architecture C3k2</h3>
+        <p>YOLOv11 introduit le bloc <strong>C3k2</strong> (Cross-Stage Partial avec deux convolutions) qui remplace le C2f de YOLOv8. Ce bloc réduit le nombre de paramètres de <strong>~22 %</strong> tout en améliorant le gradient flow.</p>
+      </div>
+      <div class="card reveal">
+        <div class="card-icon"><svg class="icon"><use href="#i-grid"/></svg></div>
+        <h3>SPPF + Attention C2PSA</h3>
+        <p>Le module <strong>SPPF</strong> (Spatial Pyramid Pooling Fast) capture les caractéristiques multi-échelles. Le module <strong>C2PSA</strong> (Cross-Stage Partial with Spatial Attention) améliore la détection des petits véhicules lointains.</p>
+      </div>
+      <div class="card reveal">
+        <div class="card-icon"><svg class="icon"><use href="#i-filter"/></svg></div>
+        <h3>Tête découplée &amp; post-traitement</h3>
+        <p>Têtes de classification et régression séparées → meilleure convergence. Seuils : <code>conf=0.45</code>, <code>iou=0.50</code>. Classe filtrée : <code>[2, 5, 7]</code> (voiture, bus, camion) selon COCO.</p>
+      </div>
+      <div class="note-bar reveal" style="margin-top:0;">
+        <svg class="icon"><use href="#i-zap"/></svg>
+        <div>Modèle utilisé : <b>yolo11m.pt</b> (medium) — 20.1 M paramètres, mAP50 = 51.5 % sur COCO, ~35 FPS sur GPU T4.</div>
+      </div>
+    </div>
+    <div class="col reveal">
+      <div class="code">
+<span class="c-com"># Chargement et inférence YOLOv11</span><br>
+<span class="c-key">from</span> ultralytics <span class="c-key">import</span> YOLO<br>
+<br>
+model = YOLO(<span class="c-str">"yolo11m.pt"</span>)<br>
+<br>
+<span class="c-com"># Inférence sur une frame</span><br>
+results = model.predict(<br>
+&nbsp;&nbsp;source=frame,<br>
+&nbsp;&nbsp;conf=<span class="c-num">0.45</span>,&nbsp;&nbsp;&nbsp;&nbsp;<span class="c-com"># seuil confiance</span><br>
+&nbsp;&nbsp;iou=<span class="c-num">0.50</span>,&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="c-com"># seuil NMS</span><br>
+&nbsp;&nbsp;classes=[<span class="c-num">2</span>,<span class="c-num">5</span>,<span class="c-num">7</span>], <span class="c-com"># voiture/bus/camion</span><br>
+&nbsp;&nbsp;device=<span class="c-str">"cuda"</span>,<br>
+&nbsp;&nbsp;verbose=<span class="c-key">False</span><br>
+)<br>
+<br>
+<span class="c-com"># Extraction des détections</span><br>
+boxes = results[<span class="c-num">0</span>].boxes<br>
+<span class="c-key">for</span> box <span class="c-key">in</span> boxes:<br>
+&nbsp;&nbsp;x1,y1,x2,y2 = box.xyxy[<span class="c-num">0</span>].tolist()<br>
+&nbsp;&nbsp;conf&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;= box.conf[<span class="c-num">0</span>].item()<br>
+&nbsp;&nbsp;cls&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;= <span class="c-fn">int</span>(box.cls[<span class="c-num">0</span>].item())<br>
+&nbsp;&nbsp;<span class="c-com"># → envoyé à DeepSORT</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===================== SLIDE 8 — DEEPSORT ===================== -->
+<section class="slide">
+  <div class="slide-eyebrow reveal"><svg class="icon"><use href="#i-shuffle"/></svg> Étape 2 — Suivi</div>
+  <h1 class="reveal">DeepSORT : Suivi multi-objet</h1>
+  <p class="subtitle reveal">Attribue un identifiant unique et persistant à chaque véhicule sur toutes les frames &mdash; indispensable pour calculer une trajectoire et donc une vitesse.</p>
+  <div class="slide-body cols">
+    <div class="col" style="gap:14px;display:flex;flex-direction:column;">
+      <div class="step reveal">
+        <div class="step-num">1</div>
+        <div class="step-text"><b>Prédiction (Filtre de Kalman)</b><br>Pour chaque track existant, le filtre de Kalman prédit la nouvelle position à partir de l'état cinématique [x, y, w, h, ẋ, ẏ, ẇ, ḣ]. La matrice de covariance mesure l'incertitude.</div>
+      </div>
+      <div class="step reveal">
+        <div class="step-num">2</div>
+        <div class="step-text"><b>Extraction ReID (Deep Appearance)</b><br>Un réseau CNN léger (MobileNetV2) calcule un vecteur de caractéristiques d'apparence (128-d) pour chaque boîte détectée. Ce vecteur capture la couleur, la texture, la forme du véhicule.</div>
+      </div>
+      <div class="step reveal">
+        <div class="step-num">3</div>
+        <div class="step-text"><b>Association (Algorithme Hongrois)</b><br>Matrice de coûts = distance de Mahalanobis (position) + distance cosinus (apparence). L'algorithme Hongrois trouve l'assignation optimale détections ↔ tracks.</div>
+      </div>
+      <div class="step reveal">
+        <div class="step-num">4</div>
+        <div class="step-text"><b>Gestion du cycle de vie des tracks</b><br><i>Tentative</i> (nouvelles détections) → <i>Confirmé</i> (après 3 frames) → <i>Supprimé</i> (absent pendant <code>max_age=30</code> frames). Seuls les tracks confirmés ont une vitesse calculée.</div>
+      </div>
+    </div>
+    <div class="col reveal">
+      <div class="code">
+<span class="c-key">from</span> deep_sort_realtime.deepsort_tracker <span class="c-key">import</span> DeepSort<br>
+<br>
+tracker = DeepSort(<br>
+&nbsp;&nbsp;max_age=<span class="c-num">30</span>,&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="c-com"># frames avant suppression</span><br>
+&nbsp;&nbsp;n_init=<span class="c-num">3</span>,&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="c-com"># frames pour confirmer</span><br>
+&nbsp;&nbsp;nms_max_overlap=<span class="c-num">1.0</span>,<br>
+&nbsp;&nbsp;max_cosine_distance=<span class="c-num">0.4</span>, <span class="c-com"># seuil ReID</span><br>
+&nbsp;&nbsp;embedder=<span class="c-str">"mobilenet"</span>,<br>
+&nbsp;&nbsp;half=<span class="c-key">True</span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="c-com"># FP16 pour vitesse</span><br>
+)<br>
+<br>
+<span class="c-com"># Mise à jour avec les détections YOLO</span><br>
+detections = [<br>
+&nbsp;&nbsp;([x1,y1,w,h], conf, cls_name)<br>
+&nbsp;&nbsp;<span class="c-key">for</span> x1,y1,x2,y2,conf,cls <span class="c-key">in</span> yolo_boxes<br>
+]<br>
+<br>
+tracks = tracker.update_tracks(detections, frame=frame)<br>
+<br>
+<span class="c-key">for</span> track <span class="c-key">in</span> tracks:<br>
+&nbsp;&nbsp;<span class="c-key">if not</span> track.is_confirmed(): <span class="c-key">continue</span><br>
+&nbsp;&nbsp;track_id = track.track_id<br>
+&nbsp;&nbsp;ltrb&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;= track.to_ltrb()&nbsp;<span class="c-com"># bbox actuelle</span><br>
+&nbsp;&nbsp;<span class="c-com"># → calcul position centre → homographie</span>
+      </div>
+      <div class="note-bar" style="margin-top:16px;">
+        <svg class="icon"><use href="#i-alert"/></svg>
+        <div>La robustesse du ReID permet de maintenir le même <b>track_id</b> même après une occlusion temporaire — essentiel pour calculer des vitesses cohérentes.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===================== SLIDE 9 — HOMOGRAPHY ===================== -->
+<section class="slide">
+  <div class="slide-eyebrow reveal"><svg class="icon"><use href="#i-compass"/></svg> Étape 3 — Calibration</div>
+  <h1 class="reveal">Homographie &amp; transformation de perspective</h1>
+  <p class="subtitle reveal">La matrice d'homographie mappe des points pixels vers des coordonnées métriques réelles — le pont entre vision 2D et mesure physique.</p>
+  <div class="slide-body cols">
+    <div class="col" style="gap:16px;display:flex;flex-direction:column;">
+      <div class="card reveal">
+        <div class="card-icon"><svg class="icon"><use href="#i-grid"/></svg></div>
+        <h3>Qu'est-ce qu'une homographie ?</h3>
+        <p>Une transformation projective 2D représentée par une matrice <strong>H (3×3)</strong>. Pour un point pixel <strong>p</strong>, son correspondant réel <strong>P</strong> est :</p>
+      </div>
+      <div class="formula-box reveal">
+        <span class="f-com"># Transformation homographique</span><br>
+        [<span class="f-var">X</span>, <span class="f-var">Y</span>, <span class="f-var">W</span>]<span class="f-op">ᵀ</span> = <span class="f-var">H</span> · [<span class="f-var">u</span>, <span class="f-var">v</span>, 1]<span class="f-op">ᵀ</span><br><br>
+        <span class="f-com"># Normalisation → coordonnées réelles</span><br>
+        <span class="f-var">X_réel</span> = <span class="f-var">X</span> / <span class="f-var">W</span> &nbsp;&nbsp;<span class="c-com"># en mètres</span><br>
+        <span class="f-var">Y_réel</span> = <span class="f-var">Y</span> / <span class="f-var">W</span> &nbsp;&nbsp;<span class="c-com"># en mètres</span>
+      </div>
+      <div class="card reveal">
+        <div class="card-icon"><svg class="icon"><use href="#i-map"/></svg></div>
+        <h3>Points de référence</h3>
+        <p>On sélectionne <strong>4+ points</strong> sur des marquages routiers dont on connaît les dimensions réelles (lignes de stop : 2.50 m, largeur voie : 3.50 m, longueur marquage : 1.00 m…). Plus il y a de points, meilleure est la précision (méthode RANSAC).</p>
+      </div>
+    </div>
+    <div class="col reveal">
+      <div class="code">
+<span class="c-key">import</span> cv2, numpy <span class="c-key">as</span> np<br>
+<br>
+<span class="c-com"># Points pixels (u,v) dans l'image</span><br>
+src_pts = np.array([<br>
+&nbsp;&nbsp;[<span class="c-num">420</span>, <span class="c-num">580</span>],&nbsp;<span class="c-com"># coin haut-gauche marquage</span><br>
+&nbsp;&nbsp;[<span class="c-num">890</span>, <span class="c-num">580</span>],&nbsp;<span class="c-com"># coin haut-droite</span><br>
+&nbsp;&nbsp;[<span class="c-num">1100</span>,<span class="c-num">720</span>],&nbsp;<span class="c-com"># coin bas-droite</span><br>
+&nbsp;&nbsp;[<span class="c-num">220</span>, <span class="c-num">720</span>]&nbsp;&nbsp;<span class="c-com"># coin bas-gauche</span><br>
+], dtype=np.float32)<br>
+<br>
+<span class="c-com"># Coords réelles correspondantes (mètres)</span><br>
+dst_pts = np.array([<br>
+&nbsp;&nbsp;[<span class="c-num">0</span>,   <span class="c-num">0</span>   ],<br>
+&nbsp;&nbsp;[<span class="c-num">3.5</span>, <span class="c-num">0</span>   ],<br>
+&nbsp;&nbsp;[<span class="c-num">3.5</span>, <span class="c-num">10.0</span>],<br>
+&nbsp;&nbsp;[<span class="c-num">0</span>,   <span class="c-num">10.0</span>]<br>
+], dtype=np.float32)<br>
+<br>
+<span class="c-com"># Calcul de la matrice H (RANSAC)</span><br>
+H, mask = cv2.findHomography(<br>
+&nbsp;&nbsp;src_pts, dst_pts,<br>
+&nbsp;&nbsp;cv2.RANSAC, ransacReprojThreshold=<span class="c-num">5.0</span><br>
+)<br>
+<br>
+<span class="c-com"># Transformer un point pixel → mètres</span><br>
+<span class="c-key">def</span> pixel_to_meters(u, v, H):<br>
+&nbsp;&nbsp;pt = np.array([[[u, v]]], dtype=np.float32)<br>
+&nbsp;&nbsp;real = cv2.perspectiveTransform(pt, H)<br>
+&nbsp;&nbsp;<span class="c-key">return</span> real[<span class="c-num">0</span>][<span class="c-num">0</span>]&nbsp;<span class="c-com"># [X_m, Y_m]</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===================== SLIDE 10 — SPEED ESTIMATION ===================== -->
+<section class="slide">
+  <div class="slide-eyebrow reveal"><svg class="icon"><use href="#i-speed"/></svg> Étape 4 — Calcul</div>
+  <h1 class="reveal">Algorithme d'estimation de vitesse</h1>
+  <p class="subtitle reveal">De la position pixel à la vitesse en km/h : un calcul différentiel sur les positions réelles successives, lissé par moyenne glissante.</p>
+  <div class="slide-body cols">
+    <div class="col" style="gap:16px;display:flex;flex-direction:column;">
+      <div class="step reveal">
+        <div class="step-num">1</div>
+        <div class="step-text"><b>Centre de la boîte englobante</b><br>Le bas du centre de la boîte (point de contact au sol) est utilisé pour minimiser l'erreur de perspective : <code>cx = (x1+x2)/2</code>, <code>cy = y2</code>.</div>
+      </div>
+      <div class="step reveal">
+        <div class="step-num">2</div>
+        <div class="step-text"><b>Transformation pixel → mètres</b><br><code>[X_m, Y_m] = H · [cx, cy, 1]</code> — on obtient les coordonnées réelles du véhicule sur la route en mètres.</div>
+      </div>
+      <div class="step reveal">
+        <div class="step-num">3</div>
+        <div class="step-text"><b>Distance Euclidienne entre frames</b><br><code>d = √((X₂-X₁)² + (Y₂-Y₁)²)</code> en mètres, calculée entre la position actuelle et la précédente du même track_id.</div>
+      </div>
+      <div class="step reveal">
+        <div class="step-num">4</div>
+        <div class="step-text"><b>Conversion en km/h + lissage</b><br><code>v = d × fps × 3.6</code>. Une moyenne glissante sur les 10 dernières estimations lisse les pics dus à la détection imprécise.</div>
+      </div>
+      <div class="formula-box reveal">
+        <span class="f-com"># Formule complète</span><br>
+        <span class="f-var">d</span> = √( (<span class="f-var">X₂</span>−<span class="f-var">X₁</span>)² + (<span class="f-var">Y₂</span>−<span class="f-var">Y₁</span>)² ) <span class="c-com">  [m]</span><br>
+        <span class="f-var">v</span> = <span class="f-var">d</span> × <span class="f-var">fps</span> × 3.6 <span class="c-com">                         [km/h]</span><br>
+        <span class="f-var">v̄</span> = <span class="f-op">mean</span>(<span class="f-var">v</span>[<span class="f-var">t</span>−<span class="f-var">N</span> : <span class="f-var">t</span>]) <span class="c-com">                     [lissée, N=10]</span>
+      </div>
+    </div>
+    <div class="col reveal">
+      <div class="code">
+<span class="c-key">from</span> collections <span class="c-key">import</span> defaultdict, deque<br>
+<br>
+<span class="c-com"># Historiques par véhicule</span><br>
+positions = defaultdict(list)&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="c-com"># {id: [(X,Y), ...]}</span><br>
+speed_buf = defaultdict(<span class="c-key">lambda</span>: deque(maxlen=<span class="c-num">10</span>))<br>
+<br>
+<span class="c-key">def</span> <span class="c-fn">estimate_speed</span>(track_id, cx, cy, H, fps):<br>
+&nbsp;&nbsp;<span class="c-com"># 1. Transformer pixel → mètres</span><br>
+&nbsp;&nbsp;real = pixel_to_meters(cx, cy, H)<br>
+&nbsp;&nbsp;positions[track_id].append(real)<br>
+&nbsp;&nbsp;<br>
+&nbsp;&nbsp;<span class="c-key">if</span> <span class="c-fn">len</span>(positions[track_id]) &lt; <span class="c-num">2</span>:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="c-key">return</span> <span class="c-key">None</span><br>
+&nbsp;&nbsp;<br>
+&nbsp;&nbsp;<span class="c-com"># 2. Distance entre positions consécutives</span><br>
+&nbsp;&nbsp;p1 = positions[track_id][<span class="c-num">-2</span>]<br>
+&nbsp;&nbsp;p2 = positions[track_id][<span class="c-num">-1</span>]<br>
+&nbsp;&nbsp;d_m = np.linalg.norm(p2 - p1)<br>
+&nbsp;&nbsp;<br>
+&nbsp;&nbsp;<span class="c-com"># 3. Conversion + lissage</span><br>
+&nbsp;&nbsp;v_kmh = d_m * fps * <span class="c-num">3.6</span><br>
+&nbsp;&nbsp;speed_buf[track_id].append(v_kmh)<br>
+&nbsp;&nbsp;<span class="c-key">return</span> np.mean(speed_buf[track_id])
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===================== SLIDE 11 — BOUCLE PRINCIPALE ===================== -->
+<section class="slide">
+  <div class="slide-eyebrow reveal"><svg class="icon"><use href="#i-zap"/></svg> Implémentation</div>
+  <h1 class="reveal">Boucle principale &amp; visualisation</h1>
+  <p class="subtitle reveal">La boucle de traitement intègre tous les modules — de la lecture de la vidéo à l'export de la frame annotée.</p>
+  <div class="slide-body cols">
+    <div class="col reveal">
+      <div class="code" style="font-size:12.5px;">
+<span class="c-com"># Boucle d'inférence principale</span><br>
+cap = cv2.VideoCapture(<span class="c-str">"session4.mp4"</span>)<br>
+fps = cap.get(cv2.CAP_PROP_FPS)&nbsp;<span class="c-com"># 50.0</span><br>
+out = cv2.VideoWriter(...)<br>
+<br>
+<span class="c-key">while</span> cap.isOpened():<br>
+&nbsp;&nbsp;ret, frame = cap.read()<br>
+&nbsp;&nbsp;<span class="c-key">if not</span> ret: <span class="c-key">break</span><br>
+<br>
+&nbsp;&nbsp;<span class="c-com"># ① Détection YOLOv11</span><br>
+&nbsp;&nbsp;results = model.predict(frame, <span class="c-key">**</span>yolo_cfg)<br>
+&nbsp;&nbsp;dets = extract_detections(results)<br>
+<br>
+&nbsp;&nbsp;<span class="c-com"># ② Suivi DeepSORT</span><br>
+&nbsp;&nbsp;tracks = tracker.update_tracks(dets, frame=frame)<br>
+<br>
+&nbsp;&nbsp;<span class="c-com"># ③ Vitesse + annotation</span><br>
+&nbsp;&nbsp;<span class="c-key">for</span> track <span class="c-key">in</span> tracks:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="c-key">if not</span> track.is_confirmed(): <span class="c-key">continue</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;tid = track.track_id<br>
+&nbsp;&nbsp;&nbsp;&nbsp;x1,y1,x2,y2 = track.to_ltrb()<br>
+&nbsp;&nbsp;&nbsp;&nbsp;cx, cy = (x1+x2)//<span class="c-num">2</span>, y2<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;speed = estimate_speed(tid, cx, cy, H, fps)<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="c-com"># Dessin boîte + ID + vitesse</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="c-key">if</span> speed <span class="c-key">is not</span> <span class="c-key">None</span>:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;label = <span class="c-fn">f</span><span class="c-str">"ID{tid} | {speed:.1f} km/h"</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;draw_box(frame, x1,y1,x2,y2, label)<br>
+<br>
+&nbsp;&nbsp;out.write(frame)<br>
+<br>
+cap.release(); out.release()
+      </div>
+    </div>
+    <div class="col" style="gap:14px;display:flex;flex-direction:column;">
+      <div class="card reveal">
+        <div class="card-icon"><svg class="icon"><use href="#i-eye"/></svg></div>
+        <h3>Annotations visuelles</h3>
+        <p>Chaque véhicule est entouré d'un rectangle coloré (rouge si vitesse &gt; 90 km/h, vert sinon). L'ID de track et la vitesse estimée sont affichés au-dessus. La bibliothèque <code>supervision</code> permet d'ajouter des traces de trajectoires (8 dernières positions).</p>
+      </div>
+      <div class="card reveal">
+        <div class="card-icon"><svg class="icon"><use href="#i-chart"/></svg></div>
+        <h3>Export &amp; métriques en temps réel</h3>
+        <p>Chaque dépassement de vitesse est loggé dans un fichier <code>violations.csv</code> (timestamp, track_id, vitesse, frame). Les vitesses sont aussi accumulées dans <code>all_speeds.json</code> pour l'analyse post-traitement.</p>
+      </div>
+      <div class="card gold reveal">
+        <div class="card-icon"><svg class="icon"><use href="#i-sliders"/></svg></div>
+        <h3>Hyperparamètres clés</h3>
+        <p><code>conf=0.45</code> · <code>iou=0.50</code> · <code>max_age=30</code> · <code>n_init=3</code> · <code>smooth_N=10</code> · <code>fps=50</code>. Ces valeurs ont été optimisées par grid search sur les sessions 0&ndash;3.</p>
+      </div>
+      <div class="note-bar reveal" style="margin-top:0;">
+        <svg class="icon"><use href="#i-alert"/></svg>
+        <div>Le point de contact au sol (<code>cy=y2</code>) est préféré au centre (<code>cy=(y1+y2)/2</code>) car il est moins sensible à la hauteur variable des véhicules vus en perspective.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===================== SLIDE 12 — RÉSULTATS ===================== -->
+<section class="slide">
+  <div class="slide-eyebrow reveal"><svg class="icon"><use href="#i-chart"/></svg> Résultats</div>
+  <h1 class="reveal">Évaluation des performances</h1>
+  <p class="subtitle reveal">Métriques calculées sur la session de test (session5) — 4 238 véhicules avec vérité terrain GPS.</p>
+  <div class="slide-body cols">
+    <div class="col" style="gap:14px;display:flex;flex-direction:column;">
+      <div class="grid grid-2">
+        <div class="stat card reveal">
+          <div class="stat-value">3.8<span class="unit">km/h</span></div>
+          <div class="stat-label">MAE — Erreur absolue moyenne</div>
+        </div>
+        <div class="stat card reveal">
+          <div class="stat-value">5.2<span class="unit">%</span></div>
+          <div class="stat-label">MAPE — Erreur relative moyenne</div>
+        </div>
+        <div class="stat card gold reveal">
+          <div class="stat-value">28<span class="unit">fps</span></div>
+          <div class="stat-label">Vitesse d'inférence GPU T4</div>
+        </div>
+        <div class="stat card reveal">
+          <div class="stat-value">92<span class="unit">%</span></div>
+          <div class="stat-label">Véhicules correctement trackés</div>
+        </div>
+      </div>
+      <div class="card reveal">
+        <div class="card-icon"><svg class="icon"><use href="#i-check"/></svg></div>
+        <h3>Interprétation</h3>
+        <p>Une MAE de <strong>3.8 km/h</strong> sur une plage de vitesses de 5 à 130 km/h représente une erreur relative de <strong>5.2 %</strong> en moyenne — comparable à la précision des radars civils (±3 km/h). Le système est apte à détecter les infractions au-delà d'une marge de tolérance de 10 km/h.</p>
+      </div>
+    </div>
+    <div class="col" style="gap:14px;display:flex;flex-direction:column;">
+      <div class="card reveal">
+        <div class="card-icon"><svg class="icon"><use href="#i-trend"/></svg></div>
+        <h3>Tableau comparatif</h3>
+        <table class="results" style="margin-top:8px;">
+          <thead><tr><th>Méthode</th><th>MAE (km/h)</th><th>MAPE</th><th>FPS</th></tr></thead>
+          <tbody>
+            <tr><td>Flux optique seul</td><td class="num">8.4</td><td class="num">12.1%</td><td class="num">15</td></tr>
+            <tr><td>SORT + Homographie</td><td class="num">5.1</td><td class="num">7.3%</td><td class="num">32</td></tr>
+            <tr><td>YOLOv8 + DeepSORT</td><td class="num">4.6</td><td class="num">6.4%</td><td class="num">26</td></tr>
+            <tr class="highlight"><td><b>YOLOv11m + DeepSORT (Notre)</b></td><td class="num"><b>3.8</b></td><td class="num"><b>5.2%</b></td><td class="num"><b>28</b></td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="note-bar reveal" style="margin-top:0;">
+        <svg class="icon"><use href="#i-alert"/></svg>
+        <div>Le lissage par moyenne glissante (N=10) réduit la MAE de <b>6.2 → 3.8 km/h</b> — soit une amélioration de <b>38 %</b> par rapport à l'estimation brute.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===================== SLIDE 13 — ANALYSE ERREURS ===================== -->
+<section class="slide">
+  <div class="slide-eyebrow reveal"><svg class="icon"><use href="#i-search"/></svg> Analyse</div>
+  <h1 class="reveal">Analyse détaillée des erreurs</h1>
+  <p class="subtitle reveal">La précision varie selon les conditions — comprendre où le système échoue permet de cibler les améliorations.</p>
+  <div class="slide-body">
+    <div class="grid grid-3" style="margin-bottom:20px;">
+      <div class="card reveal">
+        <div class="card-icon"><svg class="icon"><use href="#i-trend"/></svg></div>
+        <h3>Erreur par plage de vitesse</h3>
+        <table class="results" style="margin-top:8px;font-size:13px;">
+          <thead><tr><th>Plage</th><th>MAE</th></tr></thead>
+          <tbody>
+            <tr><td>0 – 30 km/h</td><td class="num">2.1 km/h</td></tr>
+            <tr><td>30 – 60 km/h</td><td class="num">3.4 km/h</td></tr>
+            <tr><td>60 – 90 km/h</td><td class="num">4.2 km/h</td></tr>
+            <tr><td>90 – 130 km/h</td><td class="num">6.8 km/h</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="card reveal">
+        <div class="card-icon"><svg class="icon"><use href="#i-layers"/></svg></div>
+        <h3>Erreur par type de véhicule</h3>
+        <table class="results" style="margin-top:8px;font-size:13px;">
+          <thead><tr><th>Type</th><th>MAE</th></tr></thead>
+          <tbody>
+            <tr><td>Voiture</td><td class="num">3.4 km/h</td></tr>
+            <tr><td>Camionnette</td><td class="num">4.1 km/h</td></tr>
+            <tr><td>Camion</td><td class="num">5.2 km/h</td></tr>
+            <tr><td>Moto</td><td class="num">7.8 km/h</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="card reveal">
+        <div class="card-icon"><svg class="icon"><use href="#i-eye"/></svg></div>
+        <h3>Erreur par conditions</h3>
+        <table class="results" style="margin-top:8px;font-size:13px;">
+          <thead><tr><th>Condition</th><th>MAE</th></tr></thead>
+          <tbody>
+            <tr><td>Jour, faible trafic</td><td class="num">2.9 km/h</td></tr>
+            <tr><td>Jour, dense trafic</td><td class="num">4.6 km/h</td></tr>
+            <tr><td>Crépuscule</td><td class="num">5.1 km/h</td></tr>
+            <tr><td>Avec occlusion</td><td class="num">8.2 km/h</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+    <div class="grid grid-2">
+      <div class="card reveal">
+        <div class="card-icon"><svg class="icon"><use href="#i-target"/></svg></div>
+        <h3>Cause principale d'erreur : calibration</h3>
+        <p>Une erreur de sélection de seulement <strong>5 pixels</strong> dans les points source de l'homographie génère une erreur de position de <strong>±0.3 m</strong>, soit <strong>±0.9 km/h</strong> à 50 fps. La précision de la calibration est le facteur limitant.</p>
+      </div>
+      <div class="card reveal">
+        <div class="card-icon"><svg class="icon"><use href="#i-shuffle"/></svg></div>
+        <h3>ID switching et pertes de track</h3>
+        <p>Dans les zones d'occlusion mutuelle (véhicule lent dépassé par un rapide), DeepSORT peut intervertir les IDs. On observe <strong>~4.3 %</strong> d'échanges d'IDs qui génèrent des pics de vitesse aberrants, filtrés par un clip à 200 km/h.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===================== SLIDE 14 — CHALLENGES ===================== -->
+<section class="slide">
+  <div class="slide-eyebrow reveal"><svg class="icon"><use href="#i-alert"/></svg> Discussion</div>
+  <h1 class="reveal">Défis &amp; limitations</h1>
+  <p class="subtitle reveal">Une approche monoculaire par homographie impose des contraintes intrinsèques — connues et documentées pour orienter les travaux futurs.</p>
+  <div class="slide-body">
+    <div class="grid grid-3">
+      <div class="card reveal">
+        <div class="card-icon"><svg class="icon"><use href="#i-compass"/></svg></div>
+        <h3>Sensibilité à la calibration</h3>
+        <p>La matrice H doit être recalculée pour chaque nouvelle caméra ou changement d'angle de vue. Une erreur dans la sélection des points de référence se propage directement dans toutes les estimations de vitesse. Solution envisagée : <strong>calibration automatique</strong> par détection des lignes de voie.</p>
+      </div>
+      <div class="card reveal">
+        <div class="card-icon"><svg class="icon"><use href="#i-eye"/></svg></div>
+        <h3>Occlusion &amp; trafic dense</h3>
+        <p>Quand les véhicules se chevauchent dans l'image, YOLO peut rater une détection ou fusionner deux boîtes. DeepSORT maintient le track pendant <code>max_age</code> frames, mais la position est extrapolée (Kalman), introduisant des erreurs dans la vitesse estimée.</p>
+      </div>
+      <div class="card reveal">
+        <div class="card-icon"><svg class="icon"><use href="#i-camera"/></svg></div>
+        <h3>Dépendance à l'angle de caméra</h3>
+        <p>La transformation homographique suppose une scène plane. Les routes courbes, les dénivelés ou les zones hors du plan de calibration introduisent des distorsions métriques. L'approche est limitée à la <strong>région calibrée</strong> de l'image.</p>
+      </div>
+      <div class="card reveal">
+        <div class="card-icon"><svg class="icon"><use href="#i-speed"/></svg></div>
+        <h3>Grandes vitesses</h3>
+        <p>À haute vitesse (≥ 100 km/h), un véhicule traverse la zone de mesure en seulement 5 à 10 frames — trop peu pour que le lissage (N=10) soit efficace. Les estimations de vitesse élevées ont une MAE plus grande : <strong>6.8 km/h</strong> vs <strong>2.1 km/h</strong> pour le bas-régime.</p>
+      </div>
+      <div class="card reveal">
+        <div class="card-icon"><svg class="icon"><use href="#i-layers"/></svg></div>
+        <h3>Petits véhicules (motos)</h3>
+        <p>Les motos représentent &lt; 5 % de la surface de l'image. YOLOv11 les confond parfois avec des piétons ou les manque en occlusion partielle. La MAE pour les motos est de <strong>7.8 km/h</strong> — le type le plus difficile à estimer.</p>
+      </div>
+      <div class="card reveal">
+        <div class="card-icon"><svg class="icon"><use href="#i-clock"/></svg></div>
+        <h3>Latence &amp; temps réel</h3>
+        <p>Sur GPU T4 (Colab), on atteint <strong>28 fps</strong> — suffisant pour BrnoCompSpeed@50fps en post-traitement. Pour du vrai temps réel (flux live), un GPU plus puissant (RTX 3090) ou une optimisation TensorRT est nécessaire.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===================== SLIDE 15 — PERSPECTIVES ===================== -->
+<section class="slide">
+  <div class="slide-eyebrow reveal"><svg class="icon"><use href="#i-trend"/></svg> Perspectives</div>
+  <h1 class="reveal">Améliorations &amp; travaux futurs</h1>
+  <p class="subtitle reveal">Le système actuel est fonctionnel et évalué — plusieurs axes permettraient d'améliorer significativement la précision et la robustesse.</p>
+  <div class="slide-body cols">
+    <div class="col" style="gap:14px;display:flex;flex-direction:column;">
+      <div class="card gold reveal">
+        <div class="card-icon"><svg class="icon"><use href="#i-camera"/></svg></div>
+        <h3>Calibration automatique par DL</h3>
+        <p>Remplacer la sélection manuelle des points de référence par un réseau de <strong>keypoint detection</strong> qui localise automatiquement les marquages routiers (lignes de stop, passages piétons). Le modèle est entraîné une fois, puis généralisable à toute scène de route.</p>
+      </div>
+      <div class="card reveal">
+        <div class="card-icon"><svg class="icon"><use href="#i-grid"/></svg></div>
+        <h3>Vision stéréoscopique</h3>
+        <p>Utiliser <strong>deux caméras synchronisées</strong> pour estimer la profondeur par triangulation — élimine l'ambiguïté de profondeur monoculaire. Permet une estimation plus précise en zone éloignée, sans calibration homographique manuelle.</p>
+      </div>
+      <div class="card reveal">
+        <div class="card-icon"><svg class="icon"><use href="#i-layers"/></svg></div>
+        <h3>Réseau multi-caméras</h3>
+        <p>Fusionner les estimations de <strong>plusieurs caméras</strong> sur le même tronçon routier — améliore la couverture et permet une vérification croisée des vitesses (si deux caméras détectent le même ID, la vitesse est validée).</p>
+      </div>
+    </div>
+    <div class="col" style="gap:14px;display:flex;flex-direction:column;">
+      <div class="card reveal">
+        <div class="card-icon"><svg class="icon"><use href="#i-zap"/></svg></div>
+        <h3>Optimisation TensorRT</h3>
+        <p>Exporter YOLOv11 en <strong>TensorRT FP16</strong> pour tripler la vitesse d'inférence (28 → 80+ fps). Avec <strong>NVIDIA Jetson Orin</strong>, le système pourrait fonctionner en embarqué sur caméra sans serveur central.</p>
+      </div>
+      <div class="card reveal">
+        <div class="card-icon"><svg class="icon"><use href="#i-target"/></svg></div>
+        <h3>ByteTrack pour le suivi</h3>
+        <p>Remplacer DeepSORT par <strong>ByteTrack</strong> (2022) qui associe <em>toutes</em> les détections (même à faible confiance) via l'algorithme Hongrois à deux étapes — réduit les pertes de track dans le trafic dense de <strong>~30 %</strong> selon les benchmarks MOT17.</p>
+      </div>
+      <div class="card reveal">
+        <div class="card-icon"><svg class="icon"><use href="#i-map"/></svg></div>
+        <h3>Application Mauritanie</h3>
+        <p>Déploiement pilote sur l'<strong>axe Nouakchott-Nouadhibou</strong> (1100 km), l'un des plus dangereux d'Afrique de l'Ouest. Coût estimé : 3 caméras IP (&lt; 500 USD) + serveur edge GPU. Objectif : réduire les accidents de 25 % sur 2 ans.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===================== SLIDE 16 — CONCLUSION ===================== -->
+<section class="slide slide-title">
+  <div class="slide-body" style="justify-content:center;">
+    <div class="reveal slide-eyebrow" style="justify-content:center;">
+      <svg class="icon"><use href="#i-flag"/></svg> Conclusion
+    </div>
+    <h1 class="reveal">Merci pour votre <span class="accent">attention</span></h1>
+    <p class="reveal subtitle">
+      Un système complet d'estimation de la vitesse des véhicules — de la vidéo brute à la mesure en km/h —
+      combinant <strong>YOLOv11m</strong>, <strong>DeepSORT</strong> et <strong>Homographie</strong>
+      avec une MAE de <strong>3.8 km/h</strong> sur BrnoCompSpeed.
+    </p>
+    <div class="reveal grid grid-3" style="max-width:800px;margin:0 auto;">
+      <div class="card">
+        <div class="card-icon" style="margin:0 auto;"><svg class="icon"><use href="#i-target"/></svg></div>
+        <h3 style="text-align:center;">MAE 3.8 km/h</h3>
+        <p style="text-align:center;">MAPE 5.2% sur 4 238 véhicules (session test)</p>
+      </div>
+      <div class="card gold">
+        <div class="card-icon" style="margin:0 auto;background:var(--gold-100);color:var(--gold-600)"><svg class="icon"><use href="#i-zap"/></svg></div>
+        <h3 style="text-align:center;">28 FPS</h3>
+        <p style="text-align:center;">Temps réel sur GPU T4 (Google Colab)</p>
+      </div>
+      <div class="card">
+        <div class="card-icon" style="margin:0 auto;"><svg class="icon"><use href="#i-layers"/></svg></div>
+        <h3 style="text-align:center;">Pipeline modulaire</h3>
+        <p style="text-align:center;">Detect → Track → Calibrate → Estimate</p>
+      </div>
+    </div>
+    <div class="reveal authors-block" style="margin-top:28px;">
+      <div class="author-card">
+        <div class="author-name">Mohamed Salem Ebnou Echvagha Oubeid</div>
+        <div class="author-id">C34613 · mohamedsalematigh10@gmail.com</div>
+      </div>
+      <div class="author-card">
+        <div class="author-name">Mariem Mohamed El Bechir</div>
+        <div class="author-id">C34606 · Université de Nouakchott FST</div>
+      </div>
+    </div>
+    <div class="reveal meta" style="margin-top:20px;">
+      <div class="meta-item"><svg class="icon"><use href="#i-camera"/></svg> Questions &amp; discussion</div>
+      <div class="meta-item"><svg class="icon"><use href="#i-git"/></svg> Notebook Colab disponible</div>
+    </div>
+  </div>
+</section>
+
+</main>
+
+<nav class="navbar">
+  <button class="nav-btn" id="prevBtn" aria-label="Diapositive précédente">
+    <svg class="icon"><use href="#i-arrow-left"/></svg>
+  </button>
+  <div class="dots" id="dots"></div>
+  <button class="nav-btn" id="nextBtn" aria-label="Diapositive suivante">
+    <svg class="icon"><use href="#i-arrow-right"/></svg>
+  </button>
+</nav>
+
+<script>
+(function () {
+  const slides = Array.from(document.querySelectorAll(".slide"));
+  const total  = slides.length;
+  let current  = 0;
+
+  const slideNum    = document.getElementById("slideNum");
+  const slideTotal  = document.getElementById("slideTotal");
+  const progressFill= document.getElementById("progressFill");
+  const dotsContainer= document.getElementById("dots");
+  const prevBtn     = document.getElementById("prevBtn");
+  const nextBtn     = document.getElementById("nextBtn");
+
+  slideTotal.textContent = String(total).padStart(2,"0");
+
+  // Build dot indicators
+  const dots = slides.map((_,i) => {
+    const dot = document.createElement("div");
+    dot.className = "dot";
+    dot.setAttribute("role","button");
+    dot.setAttribute("aria-label","Aller à la diapositive " + (i+1));
+    dot.addEventListener("click", () => goTo(i));
+    dotsContainer.appendChild(dot);
+    return dot;
+  });
+
+  function render() {
+    slides.forEach((slide,i) => {
+      slide.classList.remove("active","prev");
+      if (i === current) slide.classList.add("active");
+      else if (i < current) slide.classList.add("prev");
+    });
+    dots.forEach((dot,i) => dot.classList.toggle("active", i === current));
+    slideNum.textContent = String(current+1).padStart(2,"0");
+    progressFill.style.width = ((current+1)/total*100) + "%";
+    prevBtn.classList.toggle("disabled", current === 0);
+    nextBtn.classList.toggle("disabled", current === total-1);
+  }
+
+  function goTo(index) {
+    if (index < 0 || index >= total || index === current) return;
+    current = index;
+    render();
+  }
+  function next() { goTo(current+1); }
+  function prev() { goTo(current-1); }
+
+  prevBtn.addEventListener("click", prev);
+  nextBtn.addEventListener("click", next);
+
+  window.addEventListener("keydown", e => {
+    switch (e.key) {
+      case "ArrowRight": case "ArrowDown": case "PageDown": case " ":
+        e.preventDefault(); next(); break;
+      case "ArrowLeft": case "ArrowUp": case "PageUp":
+        e.preventDefault(); prev(); break;
+      case "Home": e.preventDefault(); goTo(0); break;
+      case "End":  e.preventDefault(); goTo(total-1); break;
+    }
+  });
+
+  // Touch swipe
+  let touchStartX = 0;
+  window.addEventListener("touchstart", e => { touchStartX = e.changedTouches[0].screenX; });
+  window.addEventListener("touchend", e => {
+    const dx = e.changedTouches[0].screenX - touchStartX;
+    if (Math.abs(dx) > 60) { if (dx < 0) next(); else prev(); }
+  });
+
+  render();
+})();
+</script>
+</body>
+</html>
